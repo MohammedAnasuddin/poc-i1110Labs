@@ -1,0 +1,103 @@
+@startuml
+title Voice Ordering Agent - Simplified Database Schema (POC)
+
+hide circle
+skinparam linetype ortho
+
+entity "Session" as Session {
+  * id : UUID
+  --
+  customerName : string?
+  phone : string?
+  email : string?
+  status : ACTIVE | COMPLETED | TERMINATED
+  currentCartId : UUID
+  startedAt : datetime
+  endedAt : datetime?
+}
+
+entity "MenuItem" as MenuItem {
+  * id : UUID
+  --
+  category : string
+  name : string
+  description : text
+  basePrice : decimal
+  available : boolean
+
+  modifierTree : JSON
+}
+
+entity "Cart" as Cart {
+  * id : UUID
+  --
+  sessionId : UUID
+
+  items : JSON
+
+  subtotal : decimal
+  tax : decimal
+  total : decimal
+
+  updatedAt : datetime
+}
+
+entity "Order" as Order {
+  * id : UUID
+  --
+  sessionId : UUID
+
+  items : JSON
+
+  subtotal : decimal
+  tax : decimal
+  total : decimal
+
+  smsSent : boolean
+  emailSent : boolean
+
+  status : PLACED | FAILED
+
+  placedAt : datetime
+}
+
+entity "Transcript" as Transcript {
+  * id : UUID
+  --
+  sessionId : UUID
+
+  speaker : USER | ASSISTANT
+
+  message : text
+
+  timestamp : datetime
+}
+
+entity "Analytics" as Analytics {
+  * id : UUID
+  --
+  sessionId : UUID
+
+  turns : int
+
+  promptTokens : int
+  completionTokens : int
+  totalTokens : int
+
+  totalLatencyMs : int
+  averageLatencyMs : int
+
+  toolCalls : int
+
+  estimatedCost : decimal
+}
+
+Session ||--|| Cart
+
+Session ||--o| Order
+
+Session ||--o{ Transcript
+
+Session ||--|| Analytics
+
+@enduml

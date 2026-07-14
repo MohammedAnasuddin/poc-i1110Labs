@@ -1,0 +1,44 @@
+@startuml
+title AI Agent Tool Calling Flow
+
+actor Customer
+
+participant Frontend
+
+participant Backend
+
+participant "LLM Agent" as Agent
+
+participant "Tool Executor" as Tools
+
+database Menu
+
+database Cart
+
+database Orders
+
+Customer -> Frontend : "I'd like a large pepperoni pizza"
+
+Frontend -> Backend : User Message
+
+Backend -> Agent : Conversation + Available Tools
+
+Agent -> Tools : add_to_cart()
+
+Tools -> Menu : Validate menu item
+
+Menu --> Tools : Item exists
+
+Tools -> Cart : Save item
+
+Cart --> Tools : Updated cart
+
+Tools --> Agent : Tool Result
+
+Agent --> Backend : Natural Language Response
+
+Backend --> Frontend : Response + Updated Cart
+
+Frontend --> Customer : Display + Voice
+
+@enduml

@@ -1,0 +1,72 @@
+@startuml
+title Voice Ordering Agent - High Level Architecture
+
+actor Customer
+
+package "Frontend" {
+  [React App]
+  [Voice UI]
+  [Transcript]
+  [Live Cart]
+  [Orders Page]
+}
+
+package "Backend" {
+
+  [Express API]
+
+  [Session Manager]
+
+  [AI Agent]
+
+  [Tool Executor]
+
+  database "Restaurant Menu"
+
+  database "Orders"
+
+  database "Session Store"
+
+}
+
+package "External Services" {
+
+  [OpenAI]
+
+  [SMS Service]
+
+  [Email Service]
+
+}
+
+Customer --> [Voice UI]
+
+[Voice UI] --> [React App]
+
+[React App] --> [Express API]
+
+[Express API] --> [Session Manager]
+
+[Session Manager] --> [AI Agent]
+
+[AI Agent] --> [OpenAI]
+
+[AI Agent] --> [Tool Executor]
+
+[Tool Executor] --> "Restaurant Menu"
+
+[Tool Executor] --> "Orders"
+
+[Tool Executor] --> "Session Store"
+
+[Tool Executor] --> [SMS Service]
+
+[Tool Executor] --> [Email Service]
+
+[Express API] --> [Transcript]
+
+[Express API] --> [Live Cart]
+
+[Express API] --> [Orders Page]
+
+@enduml

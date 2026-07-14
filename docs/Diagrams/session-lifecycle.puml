@@ -1,0 +1,42 @@
+@startuml
+title Session Lifecycle
+
+start
+
+:User opens application;
+
+:create Session;
+
+:create Empty Cart;
+
+:create Conversation Context;
+
+while (Conversation Active?)
+
+:Receive Message;
+
+:LLM decides Tool;
+
+:Execute Tool;
+
+:update Cart;
+
+:update Transcript;
+
+:update Analytics;
+
+endwhile
+
+:Confirm Order;
+
+:Send SMS;
+
+:Send Email;
+
+:Save Order;
+
+:Terminate Session;
+
+stop
+
+@enduml

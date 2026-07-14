@@ -1,0 +1,27 @@
+@startuml
+title Tool Registry
+
+package "Menu Tools" {
+    [list_menu]
+    [search_menu]
+    [get_menu_item]
+}
+
+package "Cart Tools" {
+    [add_to_cart]
+    [update_cart_item]
+    [remove_from_cart]
+    [view_cart]
+    [clear_cart]
+}
+
+package "Order Tools" {
+    [review_order]
+    [place_order]
+}
+
+package "Session Tools" {
+    [end_call]
+}
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+title Backend Components
+
+package API {
+
+[Chat Controller]
+
+[Order Controller]
+
+}
+
+package Agent {
+
+[Prompt]
+
+[Agent Service]
+
+[Tool Registry]
+
+}
+
+package Services {
+
+[Menu Service]
+
+[Cart Service]
+
+[Session Service]
+
+[Order Service]
+
+[Notification Service]
+
+}
+
+package Database {
+
+database Menu
+
+database Orders
+
+database Sessions
+
+}
+
+[Chat Controller] --> [Agent Service]
+
+[Order Controller] --> [Order Service]
+
+[Agent Service] --> [Prompt]
+
+[Agent Service] --> [Tool Registry]
+
+[Tool Registry] --> [Menu Service]
+
+[Tool Registry] --> [Cart Service]
+
+[Tool Registry] --> [Session Service]
+
+[Tool Registry] --> [Order Service]
+
+[Order Service] --> [Notification Service]
+
+[Menu Service] --> Menu
+
+[Order Service] --> Orders
+
+[Session Service] --> Sessions
+
+@enduml

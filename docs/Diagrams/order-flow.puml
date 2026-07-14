@@ -1,0 +1,140 @@
+@startuml
+title Complete Voice Ordering Flow
+
+actor Customer
+
+participant Frontend
+
+participant Backend
+
+participant Agent
+
+participant ToolRegistry
+
+participant MenuService
+
+participant CartService
+
+participant OrderService
+
+participant NotificationService
+
+== Conversation Starts ==
+
+Customer -> Frontend : "Hi"
+
+Frontend -> Backend : POST /chat
+
+Backend -> Agent : Conversation + Tools
+
+Agent --> Backend : Greeting
+
+Backend --> Frontend : Response
+
+== Ask Menu ==
+
+Customer -> Frontend : "What pizzas do you have?"
+
+Frontend -> Backend
+
+Backend -> Agent
+
+Agent -> ToolRegistry : list_menu()
+
+ToolRegistry -> MenuService : listMenu()
+
+MenuService --> ToolRegistry : Menu
+
+ToolRegistry --> Agent : Result
+
+Agent --> Backend : Natural response
+
+Backend --> Frontend
+
+== Order Item ==
+
+Customer -> Frontend : "Large Pepperoni Pizza"
+
+Frontend -> Backend
+
+Backend -> Agent
+
+Agent -> ToolRegistry : add_to_cart()
+
+ToolRegistry -> CartService
+
+CartService -> MenuService : Validate item
+
+MenuService --> CartService : Valid
+
+CartService --> ToolRegistry : Updated cart
+
+ToolRegistry --> Agent
+
+Agent --> Backend
+
+Backend --> Frontend
+
+== Review Order ==
+
+Customer -> Frontend : "Review my order"
+
+Frontend -> Backend
+
+Backend -> Agent
+
+Agent -> ToolRegistry : review_order()
+
+ToolRegistry -> CartService
+
+CartService --> ToolRegistry : Cart Summary
+
+ToolRegistry --> Agent
+
+Agent --> Backend
+
+Backend --> Frontend
+
+== Confirm Order ==
+
+Customer -> Frontend : "Confirm"
+
+Frontend -> Backend
+
+Backend -> Agent
+
+Agent -> ToolRegistry : place_order()
+
+ToolRegistry -> OrderService
+
+OrderService -> NotificationService : Send SMS
+
+OrderService -> NotificationService : Send Email
+
+NotificationService --> OrderService
+
+OrderService --> ToolRegistry : Order Created
+
+ToolRegistry --> Agent
+
+Agent --> Backend
+
+Backend --> Frontend
+
+== End Call ==
+
+Customer -> Frontend : Goodbye
+
+Frontend -> Backend
+
+Backend -> Agent
+
+Agent -> ToolRegistry : end_call()
+
+ToolRegistry --> Agent
+
+Agent --> Backend
+
+Backend --> Frontend
+
+@enduml
