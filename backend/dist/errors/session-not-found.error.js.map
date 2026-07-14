@@ -1,0 +1,1 @@
+{"version":3,"file":"session-not-found.error.js","sourceRoot":"","sources":["../../src/errors/session-not-found.error.ts"],"names":[],"mappings":";;;AAAA,iDAA0C;AAC1C,qDAA6C;AAE7C,0BAAkC,SAAQ,uBAAQ;IAChD,YAAY,SAAiB;QAC3B,KAAK,CACH,YAAY,SAAS,kBAAkB,EACvC,GAAG,EACH,0BAAS,CAAC,iBAAiB,CAC5B,CAAC;IACJ,CAAC;CACF"}
