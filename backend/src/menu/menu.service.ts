@@ -31,19 +31,33 @@ export class MenuService {
     );
   }
 
+  private normalizeSearchTerm(query: string): string {
+    return query
+      .trim()
+      .toLowerCase()
+      .replace(/\bpizzas\b/g, "pizza")
+      .replace(/\bburgers\b/g, "burger")
+      .replace(/\bdrinks\b/g, "drink")
+      .replace(/\bsides\b/g, "side")
+      .replace(/\bdesserts\b/g, "dessert")
+      .replace(/\bcombos\b/g, "combo");
+  }
+
   search(query: string): MenuItem[] {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = this.normalizeSearchTerm(query);
+
+    const tokens = normalizedQuery.split(/\s+/);
 
     return menuItems.filter((item) => {
       const category = categories.find(
         (category) => category.id === item.categoryId,
       );
 
-      return (
-        item.name.toLowerCase().includes(normalizedQuery) ||
-        item.description.toLowerCase().includes(normalizedQuery) ||
-        category?.name.toLowerCase().includes(normalizedQuery)
-      );
+      const searchable = [item.name, item.description, category?.name ?? ""]
+        .join(" ")
+        .toLowerCase();
+
+      return tokens.every((token) => searchable.includes(token));
     });
   }
 

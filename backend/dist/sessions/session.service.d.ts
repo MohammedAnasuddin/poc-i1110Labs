@@ -1,4 +1,5 @@
 import { type Session } from "./session.types.js";
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 export declare class SessionService {
     private readonly sessions;
     createSession(): Session;
@@ -7,4 +8,7 @@ export declare class SessionService {
     endSession(sessionId: string): void;
     resetSession(sessionId: string): void;
     getAllSessions(): Session[];
+    appendMessage(sessionId: string, message: ChatCompletionMessageParam): void;
+    getConversation(sessionId: string): ChatCompletionMessageParam[];
+    clearConversation(sessionId: string): void;
 }

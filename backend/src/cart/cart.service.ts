@@ -16,7 +16,16 @@ export class CartService {
   ) {}
 
   getCart(sessionId: string): Cart {
-    return this.sessionService.getSession(sessionId).cart;
+    const items = cart.items.map((item) => {
+      const menuItem = this.menuService.getItemById(item.selection.itemId)!;
+
+      return {
+        itemId: menuItem.id,
+        name: menuItem.name,
+        quantity: item.selection.quantity,
+        modifiers: item.selection.modifiers,
+      };
+    });
   }
 
   addItem(sessionId: string, selection: MenuSelection): Cart {
@@ -58,7 +67,9 @@ export class CartService {
   removeItem(sessionId: string, cartItemId: string): Cart {
     const session = this.sessionService.getSession(sessionId);
 
-    session.cart.items.filter((item: CartItem) => item.id !== cartItemId);
+    session.cart.items = session.cart.items.filter(
+      (item) => item.id !== cartItemId,
+    );
 
     session.updatedAt = new Date();
 

@@ -1,4 +1,5 @@
 import type { Cart } from "../cart/cart.types.js";
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 export declare enum SessionStatus {
     ACTIVE = "ACTIVE",
     TERMINATED = "TERMINATED"
@@ -9,4 +10,8 @@ export interface Session {
     cart: Cart;
     createdAt: Date;
     updatedAt: Date;
+    messages: ChatCompletionMessageParam[];
+}
+export interface CreateSessionResponse {
+    sessionId: string;
 }

@@ -278,7 +278,7 @@ Sprint 3  ✅ Backend Foundation
 
 Sprint 4  ✅ Menu Module
 
-Sprint 5  ⭐ Ordering Engine
+Sprint 5  ✅ Ordering Engine
 
 Sprint 6  ⭐ AI Agent
 

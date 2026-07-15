@@ -3,6 +3,8 @@ import express from "express";
 
 import healthRouter from "./routes/health.route.js";
 import { errorHandler } from "./middleware/error.middleware.js";
+import chatRouter from "./features/chat/chat.route.js";
+import sessionRouter from "./sessions/session.route";
 
 const app = express();
 
@@ -13,6 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/health", healthRouter);
+app.use("/api/chat", chatRouter);
+app.use("/api/sessions", sessionRouter);
 
 app.use(errorHandler);
 

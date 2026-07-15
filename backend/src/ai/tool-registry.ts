@@ -1,0 +1,65 @@
+import { CartTools } from "../tools/cart.tools.js";
+import { MenuTools } from "../tools/menu.tools.js";
+
+import { failure } from "../tools/tool.utils.js";
+import type { ToolResult } from "../tools/tool.types.js";
+
+type ToolHandler = (args: any) => ToolResult<any>;
+
+export class ToolRegistry {
+  private readonly tools = new Map<string, ToolHandler>();
+
+  constructor(
+    private readonly menuTools: MenuTools,
+    private readonly cartTools: CartTools,
+  ) {
+    this.registerTools();
+  }
+
+  private registerTools(): void {
+    this.tools.set("list_menu", this.menuTools.listMenu.bind(this.menuTools));
+
+    this.tools.set(
+      "search_menu",
+      this.menuTools.searchMenu.bind(this.menuTools),
+    );
+
+    this.tools.set(
+      "get_menu_item",
+      this.menuTools.getMenuItem.bind(this.menuTools),
+    );
+
+    this.tools.set("view_cart", this.cartTools.viewCart.bind(this.cartTools));
+
+    this.tools.set(
+      "add_to_cart",
+      this.cartTools.addToCart.bind(this.cartTools),
+    );
+
+    this.tools.set(
+      "remove_from_cart",
+      this.cartTools.removeFromCart.bind(this.cartTools),
+    );
+
+    this.tools.set(
+      "update_quantity",
+      this.cartTools.updateQuantity.bind(this.cartTools),
+    );
+
+    this.tools.set("clear_cart", this.cartTools.clearCart.bind(this.cartTools));
+  }
+
+  execute(toolName: string, args: unknown): ToolResult<unknown> {
+    const tool = this.tools.get(toolName);
+
+    if (!tool) {
+      return failure(`Unknown tool: ${toolName}`);
+    }
+
+    return tool(args);
+  }
+
+  getAvailableTools(): string[] {
+    return [...this.tools.keys()];
+  }
+}

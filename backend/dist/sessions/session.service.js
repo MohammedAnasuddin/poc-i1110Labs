@@ -4,6 +4,7 @@ exports.SessionService = void 0;
 const node_crypto_1 = require("node:crypto");
 const session_types_js_1 = require("./session.types.js");
 const session_not_found_error_js_1 = require("../errors/session-not-found.error.js");
+const MAX_HISTORY = 20;
 class SessionService {
     sessions = new Map();
     createSession() {
@@ -15,6 +16,7 @@ class SessionService {
             },
             createdAt: new Date(),
             updatedAt: new Date(),
+            messages: [],
         };
         this.sessions.set(session.id, session);
         return session;
@@ -41,6 +43,22 @@ class SessionService {
     }
     getAllSessions() {
         return [...this.sessions.values()];
+    }
+    appendMessage(sessionId, message) {
+        const session = this.getSession(sessionId);
+        session.messages.push(message);
+        session.updatedAt = new Date();
+        if (session.messages.length > MAX_HISTORY) {
+            session.messages.splice(0, session.messages.length - MAX_HISTORY);
+        }
+    }
+    getConversation(sessionId) {
+        return this.getSession(sessionId).messages;
+    }
+    clearConversation(sessionId) {
+        const session = this.getSession(sessionId);
+        session.messages = [];
+        session.updatedAt = new Date();
     }
 }
 exports.SessionService = SessionService;
