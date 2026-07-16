@@ -7,18 +7,32 @@ export class OrderTools {
   constructor(private readonly orderService: OrderService) {}
 
   async placeOrder({
-    sessionId,
-  }: {
-    sessionId: string;
-  }): Promise<ToolResult<Awaited<ReturnType<OrderService["placeOrder"]>>>> {
-    try {
-      return success(await this.orderService.placeOrder(sessionId));
-    } catch (error) {
-      return failure(
-        error instanceof Error ? error.message : "Unable to place order.",
-      );
-    }
+  sessionId,
+}: {
+  sessionId: string;
+}): Promise<ToolResult<Awaited<ReturnType<OrderService["placeOrder"]>>>> {
+  try {
+    console.log("\n========== TOOL: PLACE ORDER ==========");
+    console.log("Arguments:");
+    console.dir({ sessionId }, { depth: null });
+
+    const result = await this.orderService.placeOrder(sessionId);
+
+    console.log("\nService Result:");
+    console.dir(result, { depth: null });
+
+    console.log("========================================\n");
+
+    return success(result);
+  } catch (error) {
+    console.error("\n❌ PLACE ORDER FAILED");
+    console.error(error);
+
+    return failure(
+      error instanceof Error ? error.message : "Unable to place order.",
+    );
   }
+}
 
   async getOrder({
     orderId,

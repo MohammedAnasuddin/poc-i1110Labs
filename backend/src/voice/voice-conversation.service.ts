@@ -1,6 +1,7 @@
 import { AIAgentService } from "../ai/ai-agent.service.js";
 import { SpeechToTextService } from "./speech-to-text.service.js";
 import { TextToSpeechService } from "./text-to-speech.service.js";
+import { prepareForSpeech } from "./speech.utils.js";
 
 export class VoiceConversationService {
   constructor(
@@ -16,7 +17,9 @@ export class VoiceConversationService {
 
     const response = await this.ai.processMessage(sessionId, transcript);
 
-    const speech = await this.tts.synthesize(response.message);
+    const speech = await this.tts.synthesize(
+      prepareForSpeech(response.message),
+    );
     console.log(`Voice pipeline: ${Date.now() - startedAt} ms`);
 
     return {

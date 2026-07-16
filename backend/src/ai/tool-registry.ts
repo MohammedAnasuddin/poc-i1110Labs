@@ -65,6 +65,7 @@ export class ToolRegistry {
 
   async execute(toolName: string, args: unknown): Promise<ToolResult<unknown>> {
     const tool = this.tools.get(toolName);
+    console.log("Executing Tool:", toolName);
 
     if (!tool) {
       return failure(`Unknown tool: ${toolName}`);
