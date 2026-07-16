@@ -186,7 +186,30 @@ At this point the backend is essentially complete.
 
 ---
 
-# Sprint 8 — Frontend ⭐
+# Sprint 8 — Voice ⭐
+
+**Goal**
+
+Replace typing with speaking.
+
+### Stories
+
+- Speech-to-text
+- Text-to-speech
+- Streaming
+- Barge-in
+- Latency
+
+---
+
+### Outcome
+
+✅ Voice ordering works.
+
+---
+
+
+# Sprint 9 — Frontend ⭐
 
 **Goal**
 
@@ -208,27 +231,6 @@ Build the UI.
 
 ---
 
-# Sprint 9 — Voice ⭐
-
-**Goal**
-
-Replace typing with speaking.
-
-### Stories
-
-- Speech-to-text
-- Text-to-speech
-- Streaming
-- Barge-in
-- Latency
-
----
-
-### Outcome
-
-✅ Voice ordering works.
-
----
 
 # Sprint 10 — Polish ⭐
 
