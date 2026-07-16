@@ -13,6 +13,8 @@ const SESSION_TOOLS = new Set([
   "remove_from_cart",
   "update_quantity",
   "clear_cart",
+  "place_order",
+  "get_orders",
 ]);
 const MAX_TOOL_ITERATIONS = 5;
 
@@ -95,7 +97,7 @@ export class AIAgentService {
           toolArgs.sessionId = sessionId;
         }
 
-        const result = this.toolRegistry.execute(toolName, toolArgs);
+        const result = await this.toolRegistry.execute(toolName, toolArgs);
         console.log("\n========== TOOL CALL ==========");
         console.log(toolName);
         console.dir(toolArgs, { depth: null });

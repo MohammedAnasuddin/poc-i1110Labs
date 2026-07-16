@@ -5,10 +5,12 @@ const tool_utils_js_1 = require("../tools/tool.utils.js");
 class ToolRegistry {
     menuTools;
     cartTools;
+    orderTools;
     tools = new Map();
-    constructor(menuTools, cartTools) {
+    constructor(menuTools, cartTools, orderTools) {
         this.menuTools = menuTools;
         this.cartTools = cartTools;
+        this.orderTools = orderTools;
         this.registerTools();
     }
     registerTools() {
@@ -20,13 +22,16 @@ class ToolRegistry {
         this.tools.set("remove_from_cart", this.cartTools.removeFromCart.bind(this.cartTools));
         this.tools.set("update_quantity", this.cartTools.updateQuantity.bind(this.cartTools));
         this.tools.set("clear_cart", this.cartTools.clearCart.bind(this.cartTools));
+        this.tools.set("place_order", this.orderTools.placeOrder.bind(this.orderTools));
+        this.tools.set("get_order", this.orderTools.getOrder.bind(this.orderTools));
+        this.tools.set("get_orders", this.orderTools.getOrders.bind(this.orderTools));
     }
-    execute(toolName, args) {
+    async execute(toolName, args) {
         const tool = this.tools.get(toolName);
         if (!tool) {
             return (0, tool_utils_js_1.failure)(`Unknown tool: ${toolName}`);
         }
-        return tool(args);
+        return await tool(args);
     }
     getAvailableTools() {
         return [...this.tools.keys()];

@@ -11,3 +11,27 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum OrderStatus {
+  PLACED
+  FAILED
+}
+
+model Order {
+  id String @id @default(uuid())
+
+  sessionId String
+
+  items Json
+
+  subtotal Decimal @db.Decimal(10, 2)
+  tax Decimal @db.Decimal(10, 2)
+  total Decimal @db.Decimal(10, 2)
+
+  smsSent Boolean @default(false)
+  emailSent Boolean @default(false)
+
+  status OrderStatus @default(PLACED)
+
+  placedAt DateTime @default(now())
+}

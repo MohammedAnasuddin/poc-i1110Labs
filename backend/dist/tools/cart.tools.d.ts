@@ -7,13 +7,15 @@ export declare class CartTools {
     viewCart({ sessionId, }: {
         sessionId: string;
     }): ToolResult<ReturnType<CartService["getCartSummary"]>>;
-    addToCart({ sessionId, selection, }: {
+    addToCart({ sessionId, itemId, quantity, modifiers, }: {
         sessionId: string;
-        selection: MenuSelection;
+        itemId: string;
+        quantity: number;
+        modifiers: MenuSelection["modifiers"];
     }): ToolResult<ReturnType<CartService["addItem"]>>;
-    removeFromCart({ sessionId, cartItemId, }: {
+    removeFromCart({ sessionId, itemId, }: {
         sessionId: string;
-        cartItemId: string;
+        itemId: string;
     }): ToolResult<ReturnType<CartService["removeItem"]>>;
     updateQuantity({ sessionId, cartItemId, quantity, }: {
         sessionId: string;

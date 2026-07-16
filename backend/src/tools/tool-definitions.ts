@@ -199,4 +199,47 @@ export const toolDefinitions = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "place_order",
+      description:
+        "Convert the customer's current cart into a completed order. Use this when the customer wants to checkout or place the order.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_orders",
+      description:
+        "Retrieve all previous orders for the current customer session.",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_order",
+      description: "Retrieve a specific order by its order ID.",
+      parameters: {
+        type: "object",
+        properties: {
+          orderId: {
+            type: "string",
+            description: "The order ID.",
+          },
+        },
+        required: ["orderId"],
+      },
+    },
+  },
 ];

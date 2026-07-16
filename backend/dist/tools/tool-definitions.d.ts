@@ -8,9 +8,11 @@ export declare const toolDefinitions: ({
             properties: {
                 query?: never;
                 id?: never;
-                selection?: never;
+                modifiers?: never;
+                itemId?: never;
                 cartItemId?: never;
                 quantity?: never;
+                orderId?: never;
             };
             required: never[];
         };
@@ -28,9 +30,11 @@ export declare const toolDefinitions: ({
                     description: string;
                 };
                 id?: never;
-                selection?: never;
+                modifiers?: never;
+                itemId?: never;
                 cartItemId?: never;
                 quantity?: never;
+                orderId?: never;
             };
             required: string[];
         };
@@ -48,9 +52,11 @@ export declare const toolDefinitions: ({
                     type: string;
                     description: string;
                 };
-                selection?: never;
+                modifiers?: never;
+                itemId?: never;
                 cartItemId?: never;
                 quantity?: never;
+                orderId?: never;
             };
             required: string[];
         };
@@ -65,12 +71,54 @@ export declare const toolDefinitions: ({
             properties: {
                 query?: never;
                 id?: never;
-                selection: {
+                itemId: {
+                    type: string;
+                    description: string;
+                };
+                quantity: {
+                    type: string;
+                    description: string;
+                };
+                modifiers: {
+                    type: string;
+                    description: string;
+                    items: {
+                        type: string;
+                        properties: {
+                            groupId: {
+                                type: string;
+                            };
+                            optionId: {
+                                type: string;
+                            };
+                        };
+                        required: string[];
+                    };
+                };
+                cartItemId?: never;
+                orderId?: never;
+            };
+            required: string[];
+        };
+    };
+} | {
+    type: string;
+    function: {
+        name: string;
+        description: string;
+        parameters: {
+            type: string;
+            properties: {
+                query?: never;
+                id?: never;
+                modifiers?: never;
+                itemId: {
                     type: string;
                     description: string;
                 };
                 cartItemId?: never;
                 quantity?: never;
+                orderId?: never;
             };
             required: string[];
         };
@@ -85,32 +133,36 @@ export declare const toolDefinitions: ({
             properties: {
                 query?: never;
                 id?: never;
-                selection?: never;
-                cartItemId: {
-                    type: string;
-                    description: string;
-                };
-                quantity?: never;
-            };
-            required: string[];
-        };
-    };
-} | {
-    type: string;
-    function: {
-        name: string;
-        description: string;
-        parameters: {
-            type: string;
-            properties: {
-                query?: never;
-                id?: never;
-                selection?: never;
+                modifiers?: never;
+                itemId?: never;
                 cartItemId: {
                     type: string;
                     description: string;
                 };
                 quantity: {
+                    type: string;
+                    description: string;
+                };
+                orderId?: never;
+            };
+            required: string[];
+        };
+    };
+} | {
+    type: string;
+    function: {
+        name: string;
+        description: string;
+        parameters: {
+            type: string;
+            properties: {
+                query?: never;
+                id?: never;
+                modifiers?: never;
+                itemId?: never;
+                cartItemId?: never;
+                quantity?: never;
+                orderId: {
                     type: string;
                     description: string;
                 };

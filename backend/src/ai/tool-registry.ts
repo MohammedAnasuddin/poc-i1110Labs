@@ -3,8 +3,9 @@ import { MenuTools } from "../tools/menu.tools.js";
 
 import { failure } from "../tools/tool.utils.js";
 import type { ToolResult } from "../tools/tool.types.js";
+import { OrderTools } from "../tools/order.tools.js";
 
-type ToolHandler = (args: any) => ToolResult<any>;
+type ToolHandler = (args: any) => Promise<ToolResult<any>> | ToolResult<any>;
 
 export class ToolRegistry {
   private readonly tools = new Map<string, ToolHandler>();
@@ -12,6 +13,7 @@ export class ToolRegistry {
   constructor(
     private readonly menuTools: MenuTools,
     private readonly cartTools: CartTools,
+    private readonly orderTools: OrderTools,
   ) {
     this.registerTools();
   }
@@ -47,16 +49,28 @@ export class ToolRegistry {
     );
 
     this.tools.set("clear_cart", this.cartTools.clearCart.bind(this.cartTools));
+
+    this.tools.set(
+      "place_order",
+      this.orderTools.placeOrder.bind(this.orderTools),
+    );
+
+    this.tools.set("get_order", this.orderTools.getOrder.bind(this.orderTools));
+
+    this.tools.set(
+      "get_orders",
+      this.orderTools.getOrders.bind(this.orderTools),
+    );
   }
 
-  execute(toolName: string, args: unknown): ToolResult<unknown> {
+  async execute(toolName: string, args: unknown): Promise<ToolResult<unknown>> {
     const tool = this.tools.get(toolName);
 
     if (!tool) {
       return failure(`Unknown tool: ${toolName}`);
     }
 
-    return tool(args);
+    return await tool(args);
   }
 
   getAvailableTools(): string[] {

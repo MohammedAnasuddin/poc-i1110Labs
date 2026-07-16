@@ -16,16 +16,7 @@ export class CartService {
   ) {}
 
   getCart(sessionId: string): Cart {
-    const items = cart.items.map((item) => {
-      const menuItem = this.menuService.getItemById(item.selection.itemId)!;
-
-      return {
-        itemId: menuItem.id,
-        name: menuItem.name,
-        quantity: item.selection.quantity,
-        modifiers: item.selection.modifiers,
-      };
-    });
+    return this.sessionService.getSession(sessionId).cart;
   }
 
   addItem(sessionId: string, selection: MenuSelection): Cart {

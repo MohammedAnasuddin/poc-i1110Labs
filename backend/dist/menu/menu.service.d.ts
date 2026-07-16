@@ -4,6 +4,7 @@ export declare class MenuService {
     getCategories(): MenuCategory[];
     getItemById(id: string): MenuItem | undefined;
     getItemByName(name: string): MenuItem | undefined;
+    private normalizeSearchTerm;
     search(query: string): MenuItem[];
     validateSelection(selection: MenuSelection): ValidationResult;
     private validateModifierGroups;

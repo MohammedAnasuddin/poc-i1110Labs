@@ -16,13 +16,26 @@ class MenuService {
     getItemByName(name) {
         return menu_data_js_1.menuItems.find((item) => item.name.toLowerCase() === name.toLowerCase());
     }
+    normalizeSearchTerm(query) {
+        return query
+            .trim()
+            .toLowerCase()
+            .replace(/\bpizzas\b/g, "pizza")
+            .replace(/\bburgers\b/g, "burger")
+            .replace(/\bdrinks\b/g, "drink")
+            .replace(/\bsides\b/g, "side")
+            .replace(/\bdesserts\b/g, "dessert")
+            .replace(/\bcombos\b/g, "combo");
+    }
     search(query) {
-        const normalizedQuery = query.trim().toLowerCase();
+        const normalizedQuery = this.normalizeSearchTerm(query);
+        const tokens = normalizedQuery.split(/\s+/);
         return menu_data_js_1.menuItems.filter((item) => {
             const category = menu_data_js_1.categories.find((category) => category.id === item.categoryId);
-            return (item.name.toLowerCase().includes(normalizedQuery) ||
-                item.description.toLowerCase().includes(normalizedQuery) ||
-                category?.name.toLowerCase().includes(normalizedQuery));
+            const searchable = [item.name, item.description, category?.name ?? ""]
+                .join(" ")
+                .toLowerCase();
+            return tokens.every((token) => searchable.includes(token));
         });
     }
     validateSelection(selection) {

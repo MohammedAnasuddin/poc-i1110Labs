@@ -38,7 +38,7 @@ class CartService {
     }
     removeItem(sessionId, cartItemId) {
         const session = this.sessionService.getSession(sessionId);
-        session.cart.items.filter((item) => item.id !== cartItemId);
+        session.cart.items = session.cart.items.filter((item) => item.id !== cartItemId);
         session.updatedAt = new Date();
         return session.cart;
     }

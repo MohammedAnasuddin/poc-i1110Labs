@@ -4,6 +4,16 @@ exports.AIAgentService = void 0;
 const groq_client_js_1 = require("./groq.client.js");
 const tool_definitions_js_1 = require("../tools/tool-definitions.js");
 const system_prompt_js_1 = require("./system-prompt.js");
+const SESSION_TOOLS = new Set([
+    "view_cart",
+    "add_to_cart",
+    "remove_from_cart",
+    "update_quantity",
+    "clear_cart",
+    "place_order",
+    "get_orders",
+]);
+const MAX_TOOL_ITERATIONS = 5;
 class AIAgentService {
     toolRegistry;
     sessionService;
@@ -17,30 +27,38 @@ class AIAgentService {
             content: userMessage,
         });
         const startedAt = Date.now();
-        const messages = [
-            {
-                role: "system",
-                content: system_prompt_js_1.SYSTEM_PROMPT,
-            },
-            ...this.sessionService.getConversation(sessionId),
-        ];
-        const response = await groq_client_js_1.groqClient.chat.completions.create({
-            ...groq_client_js_1.DEFAULT_COMPLETION_OPTIONS,
-            messages,
-            tools: tool_definitions_js_1.toolDefinitions,
-        });
-        const assistantMessage = response.choices[0]?.message;
-        if (!assistantMessage) {
-            throw new Error("No response received from Groq.");
-        }
-        let finalResponse = response;
-        if (assistantMessage.tool_calls?.length) {
-            // Save the assistant tool request once
+        let messages;
+        let finalResponse = null;
+        let iteration = 0;
+        while (iteration < MAX_TOOL_ITERATIONS) {
+            iteration++;
+            messages = [
+                {
+                    role: "system",
+                    content: system_prompt_js_1.SYSTEM_PROMPT,
+                },
+                ...this.sessionService.getConversation(sessionId),
+            ];
+            const response = await groq_client_js_1.groqClient.chat.completions.create({
+                ...groq_client_js_1.DEFAULT_COMPLETION_OPTIONS,
+                messages,
+                tools: tool_definitions_js_1.toolDefinitions,
+            });
+            const assistantMessage = response.choices[0]?.message;
+            if (!assistantMessage) {
+                throw new Error("No response received.");
+            }
+            if (!assistantMessage.tool_calls?.length) {
+                finalResponse = response;
+                break;
+            }
             this.sessionService.appendMessage(sessionId, {
                 role: "assistant",
                 content: assistantMessage.content ?? "",
                 tool_calls: assistantMessage.tool_calls,
             });
+            // Otherwise...
+            // Execute every tool
             for (const toolCall of assistantMessage.tool_calls) {
                 const toolName = toolCall.function.name;
                 let args;
@@ -53,35 +71,25 @@ class AIAgentService {
                 const toolArgs = {
                     ...args,
                 };
-                const SESSION_TOOLS = new Set([
-                    "view_cart",
-                    "add_to_cart",
-                    "remove_from_cart",
-                    "update_quantity",
-                    "clear_cart",
-                ]);
                 if (SESSION_TOOLS.has(toolName)) {
-                    toolArgs["sessionId"] = sessionId;
+                    toolArgs.sessionId = sessionId;
                 }
-                const result = this.toolRegistry.execute(toolName, toolArgs);
+                const result = await this.toolRegistry.execute(toolName, toolArgs);
+                console.log("\n========== TOOL CALL ==========");
+                console.log(toolName);
+                console.dir(toolArgs, { depth: null });
+                console.log("===============================\n");
                 this.sessionService.appendMessage(sessionId, {
                     role: "tool",
                     tool_call_id: toolCall.id,
                     content: JSON.stringify(result),
                 });
             }
-            const updatedMessages = [
-                {
-                    role: "system",
-                    content: system_prompt_js_1.SYSTEM_PROMPT,
-                },
-                ...this.sessionService.getConversation(sessionId),
-            ];
-            finalResponse = await groq_client_js_1.groqClient.chat.completions.create({
-                ...groq_client_js_1.DEFAULT_COMPLETION_OPTIONS,
-                messages: updatedMessages,
-                tools: tool_definitions_js_1.toolDefinitions,
-            });
+            // Append tool results
+            // Continue loop
+        }
+        if (!finalResponse) {
+            throw new Error(`Maximum tool iterations (${MAX_TOOL_ITERATIONS}) exceeded.`);
         }
         const latency = Date.now() - startedAt;
         this.sessionService.appendMessage(sessionId, {

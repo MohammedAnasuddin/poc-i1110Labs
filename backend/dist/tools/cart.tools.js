@@ -15,17 +15,38 @@ class CartTools {
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to retrieve cart.");
         }
     }
-    addToCart({ sessionId, selection, }) {
+    addToCart({ sessionId, itemId, quantity, modifiers, }) {
         try {
+            const selection = {
+                itemId,
+                quantity,
+                modifiers,
+            };
             return (0, tool_utils_js_1.success)(this.cartService.addItem(sessionId, selection));
         }
         catch (error) {
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to add item to cart.");
         }
     }
-    removeFromCart({ sessionId, cartItemId, }) {
+    removeFromCart({ sessionId, itemId, }) {
         try {
-            return (0, tool_utils_js_1.success)(this.cartService.removeItem(sessionId, cartItemId));
+            const cart = this.cartService.getCart(sessionId);
+            const matches = cart.items.filter((item) => item.selection.itemId === itemId || item.id === itemId);
+            if (matches.length === 0) {
+                return (0, tool_utils_js_1.failure)("Item is not in the cart.");
+            }
+            if (matches.length === 1) {
+                return (0, tool_utils_js_1.success)(this.cartService.removeItem(sessionId, matches[0].id));
+            }
+            return {
+                success: false,
+                error: "MULTIPLE_MATCHES",
+                data: matches.map((item) => ({
+                    itemId: item.selection.itemId,
+                    quantity: item.selection.quantity,
+                    modifiers: item.selection.modifiers,
+                })),
+            };
         }
         catch (error) {
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to remove item.");

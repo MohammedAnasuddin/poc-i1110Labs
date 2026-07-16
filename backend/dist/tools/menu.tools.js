@@ -9,15 +9,47 @@ class MenuTools {
     }
     listMenu(_) {
         try {
-            return (0, tool_utils_js_1.success)(this.menuService.getAllItems());
+            const items = this.menuService.getAllItems().map((item) => ({
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                price: item.basePrice,
+                modifierGroups: item.modifierGroups.map((group) => ({
+                    id: group.id,
+                    name: group.name,
+                    required: group.required,
+                    options: group.options.map((option) => ({
+                        id: option.id,
+                        name: option.name,
+                        priceDelta: option.priceDelta,
+                    })),
+                })),
+            }));
+            return (0, tool_utils_js_1.success)(items);
         }
         catch (error) {
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to retrieve menu.");
         }
     }
-    searchMenu({ query, }) {
+    searchMenu({ query }) {
         try {
-            return (0, tool_utils_js_1.success)(this.menuService.search(query));
+            const items = this.menuService.search(query).map((item) => ({
+                id: item.id,
+                name: item.name,
+                description: item.description,
+                price: item.basePrice,
+                modifierGroups: item.modifierGroups.map((group) => ({
+                    id: group.id,
+                    name: group.name,
+                    required: group.required,
+                    options: group.options.map((option) => ({
+                        id: option.id,
+                        name: option.name,
+                        priceDelta: option.priceDelta,
+                    })),
+                })),
+            }));
+            return (0, tool_utils_js_1.success)(items);
         }
         catch (error) {
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to search menu.");
