@@ -20,11 +20,23 @@ export class SessionService {
         items: [],
       },
 
+      analytics: {
+        promptTokens: 0,
+        completionTokens: 0,
+        latency: 0,
+        turns: 0,
+        toolCalls: 0,
+        startedAt: new Date(),
+      },
+
       createdAt: new Date(),
 
       updatedAt: new Date(),
+
       messages: [],
     };
+
+    console.log("✅ Session Created:", session.id);
 
     this.sessions.set(session.id, session);
 
@@ -45,11 +57,15 @@ export class SessionService {
     return this.sessions.has(sessionId);
   }
 
-  endSession(sessionId: string): void {
+  endSession(sessionId: string): Session {
     const session = this.getSession(sessionId);
+
+    console.log("🛑 Ending Session:", sessionId);
 
     session.status = SessionStatus.TERMINATED;
     session.updatedAt = new Date();
+
+    return session;
   }
 
   resetSession(sessionId: string): void {
@@ -116,5 +132,33 @@ export class SessionService {
       subtotal,
       total: subtotal,
     };
+  }
+
+  recordTurn(
+    sessionId: string,
+    promptTokens: number,
+    completionTokens: number,
+    latency: number,
+  ): void {
+    const session = this.getSession(sessionId);
+
+    session.analytics.promptTokens += promptTokens;
+    session.analytics.completionTokens += completionTokens;
+    session.analytics.latency += latency;
+    session.analytics.turns++;
+
+    session.updatedAt = new Date();
+  }
+
+  recordToolCall(sessionId: string): void {
+    const session = this.getSession(sessionId);
+
+    session.analytics.toolCalls++;
+
+    session.updatedAt = new Date();
+  }
+
+  getConversationAnalytics(sessionId: string) {
+    return this.getSession(sessionId).analytics;
   }
 }

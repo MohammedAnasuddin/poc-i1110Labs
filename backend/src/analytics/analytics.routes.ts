@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { getAnalyticsController } from "./analytics.controller";
+import {
+  getAnalyticsController,
+  getConversationAnalyticsController,
+} from "./analytics.controller";
 
 export const analyticsRouter = Router();
 
 analyticsRouter.get("/", getAnalyticsController);
+analyticsRouter.get("/conversations", getConversationAnalyticsController);

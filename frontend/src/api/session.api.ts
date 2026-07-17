@@ -5,3 +5,9 @@ export async function createSession() {
 
   return data;
 }
+
+// session.api.ts
+
+export async function endSession(sessionId: string) {
+  await api.post(`/sessions/${sessionId}/end`);
+}

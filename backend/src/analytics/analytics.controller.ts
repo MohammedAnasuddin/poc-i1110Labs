@@ -6,3 +6,12 @@ export async function getAnalyticsController(req: Request, res: Response) {
 
   res.json(analytics);
 }
+
+export async function getConversationAnalyticsController(
+  req: Request,
+  res: Response,
+) {
+  const conversations = await analyticsService.getConversationAnalytics();
+
+  res.json(conversations);
+}

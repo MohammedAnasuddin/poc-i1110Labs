@@ -1,33 +1,30 @@
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
+import type { ConversationAnalytics } from "../../types/analytics";
+
 type Props = {
-  promptTokens: number;
-  completionTokens: number;
+  conversations: ConversationAnalytics[];
 };
 
-export function TokenChart({ promptTokens, completionTokens }: Props) {
-  const data = [
-    {
-      name: "Prompt",
-      tokens: promptTokens,
-    },
-    {
-      name: "Completion",
-      tokens: completionTokens,
-    },
-  ].reverse();
+export function TokenChart({ conversations }: Props) {
+  const data = conversations.map((conversation, index) => ({
+    name: `Conv ${index + 1}`,
+    prompt: conversation.promptTokens,
+    completion: conversation.completionTokens,
+  }));
 
   return (
     <ResponsiveContainer width="100%" height={320}>
-      <AreaChart data={data}>
+      <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
 
         <XAxis dataKey="name" />
@@ -36,13 +33,22 @@ export function TokenChart({ promptTokens, completionTokens }: Props) {
 
         <Tooltip />
 
-        <Area
-          dataKey="tokens"
-          type="monotone"
-          fill="var(--accent)"
-          stroke="var(--primary)"
+        <Legend />
+
+        <Bar
+          dataKey="prompt"
+          stackId="tokens"
+          name="Prompt"
+          fill="var(--primary)"
         />
-      </AreaChart>
+
+        <Bar
+          dataKey="completion"
+          stackId="tokens"
+          name="Completion"
+          fill="var(--accent)"
+        />
+      </BarChart>
     </ResponsiveContainer>
   );
 }

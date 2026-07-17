@@ -78,6 +78,13 @@ function formatDuration(seconds: number) {
 export function VoiceRecorder({ sessionId }: { sessionId: string }) {
   const { state, duration, startRecording, stopRecording } =
     useVoiceRecorder(sessionId);
+  if (!sessionId) {
+    return (
+      <div className="rounded-lg border p-6 text-center text-gray-500">
+        Click <strong>Start Conversation</strong> to begin.
+      </div>
+    );
+  }
 
   const handleClick = () => {
     if (state === "idle") {

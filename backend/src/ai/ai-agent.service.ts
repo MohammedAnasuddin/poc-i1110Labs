@@ -104,6 +104,7 @@ export class AIAgentService {
         }
 
         const result = await this.toolRegistry.execute(toolName, toolArgs);
+        this.sessionService.recordToolCall(sessionId);
 
         console.log("\n========== TOOL CALL ==========");
         console.log("Tool:", toolName);
@@ -138,6 +139,13 @@ export class AIAgentService {
     const promptTokens = finalResponse.usage?.prompt_tokens ?? 0;
 
     const completionTokens = finalResponse.usage?.completion_tokens ?? 0;
+
+    this.sessionService.recordTurn(
+      sessionId,
+      promptTokens,
+      completionTokens,
+      latency,
+    );
 
     await analyticsService.recordTurn({
       latency,

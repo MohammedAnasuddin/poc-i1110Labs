@@ -57,3 +57,23 @@ model Analytics {
 
   updatedAt          DateTime @updatedAt
 }
+
+model ConversationAnalytics {
+  id               String   @id @default(cuid())
+
+  sessionId        String   @unique
+
+  promptTokens     Int      @default(0)
+  completionTokens Int      @default(0)
+  totalTokens      Int      @default(0)
+
+  latency          Int      @default(0)
+
+  turns            Int      @default(0)
+  toolCalls        Int      @default(0)
+
+  startedAt        DateTime @default(now())
+  endedAt          DateTime
+
+  createdAt        DateTime @default(now())
+}

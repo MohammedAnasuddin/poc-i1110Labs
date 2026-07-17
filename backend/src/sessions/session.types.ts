@@ -16,8 +16,17 @@ export interface Session {
   createdAt: Date;
 
   updatedAt: Date;
-  
+
   messages: ChatCompletionMessageParam[];
+
+  analytics: {
+    promptTokens: number;
+    completionTokens: number;
+    latency: number;
+    turns: number;
+    toolCalls: number;
+    startedAt: Date;
+  };
 }
 
 export interface CreateSessionResponse {

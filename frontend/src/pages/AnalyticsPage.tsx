@@ -1,27 +1,37 @@
 import { useEffect, useState } from "react";
 
-import { getAnalytics } from "../api/analytics.api";
-import type { Analytics } from "../types/analytics";
-
 import { StatCard } from "@/components/stat-card";
 import { TokenChart } from "@/components/charts/token-chart";
 import { ToolChart } from "@/components/charts/tool-chart";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
+import { getAnalytics, getConversationAnalytics } from "../api/analytics.api";
+
+import type { Analytics, ConversationAnalytics } from "../types/analytics";
+
 export function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
+
+  const [conversations, setConversations] = useState<ConversationAnalytics[]>(
+    [],
+  );
 
   useEffect(() => {
     load();
 
-    const interval = setInterval(load, 3000);
+    const interval = setInterval(load, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
   async function load() {
-    const data = await getAnalytics();
-    setAnalytics(data);
+    const [analyticsData, conversationData] = await Promise.all([
+      getAnalytics(),
+      getConversationAnalytics(),
+    ]);
+
+    setAnalytics(analyticsData);
+    setConversations(conversationData);
   }
 
   return (
@@ -95,11 +105,7 @@ export function AnalyticsPage() {
           <div className="card col-span-2 p-6">
             <h3 className="mb-6 text-lg font-semibold">Token Usage</h3>
 
-            <TokenChart
-              promptTokens={analytics?.promptTokens ?? 0}
-              completionTokens={analytics?.completionTokens ?? 0}
-              conversations={analytics?.conversations ?? 1}
-            />
+            <TokenChart conversations={conversations} />
           </div>
 
           {/* Tool Chart */}
@@ -173,8 +179,6 @@ export function AnalyticsPage() {
         </div>
 
         {/* ================= Row 3 ================= */}
-
-       
       </div>
     </main>
   );

@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from "../generated/prisma/client";
 
 import type { AnalyticsResponse, TurnMetrics } from "./analytics.types.js";
+import type { Session } from "../sessions/session.types.js";
 
 export class AnalyticsService {
   constructor(private readonly prisma: PrismaClient) {}
@@ -114,5 +115,41 @@ export class AnalyticsService {
           ? 100
           : (analytics.successfulToolCalls / analytics.toolCalls) * 100,
     };
+  }
+
+  async recordConversationEnd(session: Session): Promise<void> {
+    if (session.analytics.turns === 0) {
+      return;
+    }
+    await this.prisma.conversationAnalytics.create({
+      data: {
+        sessionId: session.id,
+
+        promptTokens: session.analytics.promptTokens,
+
+        completionTokens: session.analytics.completionTokens,
+
+        totalTokens:
+          session.analytics.promptTokens + session.analytics.completionTokens,
+
+        latency: session.analytics.latency,
+
+        turns: session.analytics.turns,
+
+        toolCalls: session.analytics.toolCalls,
+
+        startedAt: session.analytics.startedAt,
+
+        endedAt: new Date(),
+      },
+    });
+  }
+
+  async getConversationAnalytics() {
+    return this.prisma.conversationAnalytics.findMany({
+      orderBy: {
+        startedAt: "asc",
+      },
+    });
   }
 }
