@@ -35,3 +35,25 @@ model Order {
 
   placedAt DateTime @default(now())
 }
+
+model Analytics {
+  id                 Int      @id @default(1)
+
+  conversations      Int      @default(0)
+  turns              Int      @default(0)
+
+  ordersPlaced       Int      @default(0)
+
+  toolCalls          Int      @default(0)
+  successfulToolCalls Int     @default(0)
+  failedToolCalls    Int      @default(0)
+
+  promptTokens       Int      @default(0)
+  completionTokens   Int      @default(0)
+
+  totalLatency       Int      @default(0)
+
+  totalCost          Float    @default(0)
+
+  updatedAt          DateTime @updatedAt
+}

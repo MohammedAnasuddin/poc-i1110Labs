@@ -4,6 +4,7 @@ import { MenuTools } from "../tools/menu.tools.js";
 import { failure } from "../tools/tool.utils.js";
 import type { ToolResult } from "../tools/tool.types.js";
 import { OrderTools } from "../tools/order.tools.js";
+import { analyticsService } from "../container.js";
 
 type ToolHandler = (args: any) => Promise<ToolResult<any>> | ToolResult<any>;
 
@@ -65,13 +66,26 @@ export class ToolRegistry {
 
   async execute(toolName: string, args: unknown): Promise<ToolResult<unknown>> {
     const tool = this.tools.get(toolName);
+
     console.log("Executing Tool:", toolName);
 
     if (!tool) {
+      await analyticsService.recordToolCall(false);
+
       return failure(`Unknown tool: ${toolName}`);
     }
 
-    return await tool(args);
+    try {
+      const result = await tool(args);
+
+      await analyticsService.recordToolCall(true);
+
+      return result;
+    } catch (error) {
+      await analyticsService.recordToolCall(false);
+
+      throw error;
+    }
   }
 
   getAvailableTools(): string[] {

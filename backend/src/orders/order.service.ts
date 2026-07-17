@@ -3,6 +3,7 @@ import { OrderStatus } from "../generated/prisma/enums";
 import { CartService } from "../cart/cart.service.js";
 
 import type { PlaceOrderResult } from "./order.types.js";
+import { analyticsService } from "../container";
 
 export class OrderService {
   constructor(
@@ -42,6 +43,8 @@ export class OrderService {
         status: OrderStatus.PLACED,
       },
     });
+
+    await analyticsService.recordOrder();
 
     console.log("\n✅ Prisma returned:");
     console.dir(order, { depth: null });

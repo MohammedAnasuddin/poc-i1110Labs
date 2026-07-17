@@ -6,6 +6,7 @@ import { ToolRegistry } from "./tool-registry.js";
 import { SessionService } from "../sessions/session.service.js";
 import { SYSTEM_PROMPT } from "./system-prompt.js";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
+import { analyticsService } from "../container.js";
 
 const SESSION_TOOLS = new Set([
   "view_cart",
@@ -23,6 +24,7 @@ export class AIAgentService {
     private readonly toolRegistry: ToolRegistry,
     private readonly sessionService: SessionService,
   ) {}
+
   async processMessage(
     sessionId: string,
     userMessage: string,
@@ -31,7 +33,7 @@ export class AIAgentService {
       role: "user",
       content: userMessage,
     });
-
+    await analyticsService.recordConversation();
     const startedAt = Date.now();
 
     let messages: ChatCompletionMessageParam[];
@@ -102,7 +104,6 @@ export class AIAgentService {
         }
 
         const result = await this.toolRegistry.execute(toolName, toolArgs);
-      
 
         console.log("\n========== TOOL CALL ==========");
         console.log("Tool:", toolName);
@@ -134,6 +135,17 @@ export class AIAgentService {
 
     const latency = Date.now() - startedAt;
 
+    const promptTokens = finalResponse.usage?.prompt_tokens ?? 0;
+
+    const completionTokens = finalResponse.usage?.completion_tokens ?? 0;
+
+    await analyticsService.recordTurn({
+      latency,
+      promptTokens,
+      completionTokens,
+      cost: 0,
+    });
+
     this.sessionService.appendMessage(sessionId, {
       role: "assistant",
       content: finalResponse.choices[0]?.message.content ?? "",
@@ -142,12 +154,13 @@ export class AIAgentService {
     return {
       message: finalResponse.choices[0]?.message.content ?? "",
 
-      promptTokens: finalResponse.usage?.prompt_tokens ?? 0,
+      promptTokens,
+
+      completionTokens,
+
+      totalTokens: promptTokens + completionTokens,
 
       latency,
-      completionTokens: finalResponse.usage?.completion_tokens ?? 0,
-
-      totalTokens: finalResponse.usage?.total_tokens ?? 0,
     };
   }
 }

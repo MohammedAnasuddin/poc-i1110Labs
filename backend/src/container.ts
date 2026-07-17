@@ -16,15 +16,16 @@ import { prisma } from "./database/prisma.js";
 import { GroqSpeechToTextProvider } from "./voice/providers/groq-stt.provider.js";
 import { SpeechToTextService } from "./voice/speech-to-text.service.js";
 
-
 import { TextToSpeechService } from "./voice/text-to-speech.service.js";
 import { EdgeTTSProvider } from "./voice/providers/tts/edge-tts.provider.js";
 import { VoiceConversationService } from "./voice/voice-conversation.service.js";
+import { AnalyticsService } from "./analytics/analytics.service.js";
+
+export const analyticsService = new AnalyticsService(prisma);
 
 // Services
 export const menuService = new MenuService();
 export const sessionService = new SessionService(menuService);
-
 
 export const pricingService = new PricingService();
 
@@ -56,11 +57,10 @@ const ttsProvider = new EdgeTTSProvider();
 
 export const textToSpeechService = new TextToSpeechService(ttsProvider);
 
-const voiceConversationService =
-  new VoiceConversationService(
-    speechToTextService,
-    aiAgentService,
-    textToSpeechService,
-  );
+const voiceConversationService = new VoiceConversationService(
+  speechToTextService,
+  aiAgentService,
+  textToSpeechService,
+);
 
 export { voiceConversationService };
