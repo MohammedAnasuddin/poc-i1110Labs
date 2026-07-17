@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { sessionService } from "../container";
+import { cartService, sessionService } from "../container";
 import type { CreateSessionResponse } from "./session.types.js";
 
 export function createSessionController(
@@ -17,4 +17,27 @@ export function createSessionController(
   } catch (error) {
     next(error);
   }
+}
+
+export async function getConversationController(req, res) {
+  const { sessionId } = req.params;
+
+  const messages = sessionService.getConversation(sessionId);
+
+  res.json({
+    messages,
+  });
+}
+
+// controllers/session.controller.ts
+
+export async function getCartController(
+  req: Request,
+  res: Response,
+) {
+  const { sessionId } = req.params;
+
+ const cart = cartService.getCart(sessionId);
+
+  res.json(cart);
 }

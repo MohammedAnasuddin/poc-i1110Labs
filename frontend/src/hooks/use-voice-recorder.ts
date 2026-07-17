@@ -1,15 +1,29 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { sendVoice } from "@/api/voice.api";
 import type { VoiceState } from "@/types/voice";
 
 export function useVoiceRecorder(sessionId: string) {
   const [state, setState] = useState<VoiceState>("idle");
+  const [duration, setDuration] = useState(0);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+
+  useEffect(() => {
+    if (state !== "listening") {
+      setDuration(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setDuration((previous) => previous + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [state]);
 
   function cleanup() {
     mediaRecorderRef.current = null;
@@ -127,6 +141,7 @@ export function useVoiceRecorder(sessionId: string) {
 
   return {
     state,
+    duration,
     audioBlob,
     startRecording,
     stopRecording,

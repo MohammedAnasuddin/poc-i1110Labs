@@ -10,10 +10,16 @@ class OrderService {
         this.cartService = cartService;
     }
     async placeOrder(sessionId) {
+        console.log("\n========== PLACE ORDER ==========");
+        console.log("Session ID:", sessionId);
         const cart = this.cartService.getCartSummary(sessionId);
+        console.log("\nCart Summary:");
+        console.dir(cart, { depth: null });
         if (cart.items.length === 0) {
+            console.log("❌ Cart is empty.");
             throw new Error("Cart is empty.");
         }
+        console.log("\nCreating order in database...");
         const order = await this.prisma.order.create({
             data: {
                 sessionId,
@@ -24,7 +30,20 @@ class OrderService {
                 status: enums_1.OrderStatus.PLACED,
             },
         });
+        console.log("\n✅ Prisma returned:");
+        console.dir(order, { depth: null });
+        console.log("\nVerifying order exists in database...");
+        const verify = await this.prisma.order.findUnique({
+            where: {
+                id: order.id,
+            },
+        });
+        console.log("\nDatabase Verification:");
+        console.dir(verify, { depth: null });
+        console.log("\nClearing cart...");
         this.cartService.clearCart(sessionId);
+        console.log("✅ Cart cleared.");
+        console.log("\n========== PLACE ORDER COMPLETE ==========\n");
         return {
             orderId: order.id,
             total: Number(order.total),

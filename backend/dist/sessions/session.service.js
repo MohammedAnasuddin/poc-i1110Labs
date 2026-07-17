@@ -6,7 +6,11 @@ const session_types_js_1 = require("./session.types.js");
 const session_not_found_error_js_1 = require("../errors/session-not-found.error.js");
 const MAX_HISTORY = 20;
 class SessionService {
+    menuService;
     sessions = new Map();
+    constructor(menuService) {
+        this.menuService = menuService;
+    }
     createSession() {
         const session = {
             id: (0, node_crypto_1.randomUUID)(),
@@ -59,6 +63,32 @@ class SessionService {
         const session = this.getSession(sessionId);
         session.messages = [];
         session.updatedAt = new Date();
+    }
+    getCart(sessionId) {
+        const session = this.getSession(sessionId);
+        const items = session.cart.items.map((cartItem) => {
+            const menuItem = this.menuService.getItemById(cartItem.selection.itemId);
+            if (!menuItem) {
+                throw new Error(`Menu item ${cartItem.selection.itemId} not found.`);
+            }
+            return {
+                id: cartItem.id,
+                itemId: menuItem.id,
+                name: menuItem.name,
+                price: menuItem.price,
+                quantity: cartItem.selection.quantity,
+                modifiers: cartItem.selection.modifiers,
+                subtotal: menuItem.price * cartItem.selection.quantity,
+            };
+        });
+        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+        const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+        return {
+            items,
+            totalItems,
+            subtotal,
+            total: subtotal,
+        };
     }
 }
 exports.SessionService = SessionService;

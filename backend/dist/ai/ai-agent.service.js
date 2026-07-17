@@ -44,6 +44,9 @@ class AIAgentService {
                 messages,
                 tools: tool_definitions_js_1.toolDefinitions,
             });
+            console.log("\n========== LLM RESPONSE ==========");
+            console.dir(response.choices[0].message, { depth: null });
+            console.log("=================================\n");
             const assistantMessage = response.choices[0]?.message;
             if (!assistantMessage) {
                 throw new Error("No response received.");
@@ -76,8 +79,11 @@ class AIAgentService {
                 }
                 const result = await this.toolRegistry.execute(toolName, toolArgs);
                 console.log("\n========== TOOL CALL ==========");
-                console.log(toolName);
+                console.log("Tool:", toolName);
+                console.log("Arguments:");
                 console.dir(toolArgs, { depth: null });
+                console.log("Result:");
+                console.dir(result, { depth: null });
                 console.log("===============================\n");
                 this.sessionService.appendMessage(sessionId, {
                     role: "tool",

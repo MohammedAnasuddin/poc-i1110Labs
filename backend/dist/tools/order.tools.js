@@ -9,9 +9,18 @@ class OrderTools {
     }
     async placeOrder({ sessionId, }) {
         try {
-            return (0, tool_utils_js_1.success)(await this.orderService.placeOrder(sessionId));
+            console.log("\n========== TOOL: PLACE ORDER ==========");
+            console.log("Arguments:");
+            console.dir({ sessionId }, { depth: null });
+            const result = await this.orderService.placeOrder(sessionId);
+            console.log("\nService Result:");
+            console.dir(result, { depth: null });
+            console.log("========================================\n");
+            return (0, tool_utils_js_1.success)(result);
         }
         catch (error) {
+            console.error("\n❌ PLACE ORDER FAILED");
+            console.error(error);
             return (0, tool_utils_js_1.failure)(error instanceof Error ? error.message : "Unable to place order.");
         }
     }

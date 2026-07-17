@@ -22,9 +22,9 @@ import { EdgeTTSProvider } from "./voice/providers/tts/edge-tts.provider.js";
 import { VoiceConversationService } from "./voice/voice-conversation.service.js";
 
 // Services
-export const sessionService = new SessionService();
-
 export const menuService = new MenuService();
+export const sessionService = new SessionService(menuService);
+
 
 export const pricingService = new PricingService();
 

@@ -28,6 +28,7 @@ class ToolRegistry {
     }
     async execute(toolName, args) {
         const tool = this.tools.get(toolName);
+        console.log("Executing Tool:", toolName);
         if (!tool) {
             return (0, tool_utils_js_1.failure)(`Unknown tool: ${toolName}`);
         }

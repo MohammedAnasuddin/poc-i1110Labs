@@ -8,30 +8,28 @@ import type {
 } from "../menu/menu.types.js";
 
 export class PricingService {
-  calculateItemPrice(menuItem: MenuItem, selection: MenuSelection): number {
+  calculateUnitPrice(menuItem: MenuItem, selection: MenuSelection): number {
     const modifierPrice = this.calculateModifierPrice(
       menuItem.modifierGroups,
       selection.modifiers,
     );
 
-    return (menuItem.basePrice + modifierPrice) * selection.quantity;
+    return menuItem.basePrice + modifierPrice;
   }
 
-  calculateCartSummary(cart: Cart, itemPrices: number[]): CartSummary {
+  calculateItemPrice(menuItem: MenuItem, selection: MenuSelection): number {
+    return this.calculateUnitPrice(menuItem, selection) * selection.quantity;
+  }
+
+  calculateCartSummary(cart: CartSummary, itemPrices: number[]): CartSummary {
     const subtotal = itemPrices.reduce((sum, price) => sum + price, 0);
 
-    const totalItems = cart.items.reduce(
-      (sum, item) => sum + item.selection.quantity,
-      0,
-    );
+    const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
     return {
       items: cart.items,
-
       totalItems,
-
       subtotal,
-
       total: subtotal,
     };
   }

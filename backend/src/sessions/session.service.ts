@@ -3,10 +3,12 @@ import { randomUUID } from "node:crypto";
 import { SessionStatus, type Session } from "./session.types.js";
 import { SessionNotFoundError } from "../errors/session-not-found.error.js";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
+import { MenuService } from "../menu/menu.service.js";
 
 const MAX_HISTORY = 20;
 export class SessionService {
   private readonly sessions = new Map<string, Session>();
+  constructor(private readonly menuService: MenuService) {}
 
   createSession(): Session {
     const session: Session = {
@@ -81,5 +83,38 @@ export class SessionService {
 
     session.messages = [];
     session.updatedAt = new Date();
+  }
+
+  getCart(sessionId: string) {
+    const session = this.getSession(sessionId);
+
+    const items = session.cart.items.map((cartItem) => {
+      const menuItem = this.menuService.getItemById(cartItem.selection.itemId);
+
+      if (!menuItem) {
+        throw new Error(`Menu item ${cartItem.selection.itemId} not found.`);
+      }
+
+      return {
+        id: cartItem.id,
+        itemId: menuItem.id,
+        name: menuItem.name,
+        price: menuItem.price,
+        quantity: cartItem.selection.quantity,
+        modifiers: cartItem.selection.modifiers,
+        subtotal: menuItem.price * cartItem.selection.quantity,
+      };
+    });
+
+    const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    const subtotal = items.reduce((sum, item) => sum + item.subtotal, 0);
+
+    return {
+      items,
+      totalItems,
+      subtotal,
+      total: subtotal,
+    };
   }
 }

@@ -19,3 +19,20 @@ export interface CartSummary {
 
   total: number;
 }
+
+export interface CartResponseItem {
+  id: string;
+  itemId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  modifiers: SelectedModifier[];
+}
+
+export interface CartResponse {
+  items: CartResponseItem[];
+  totalItems: number;
+  subtotal: number;
+  total: number;
+}

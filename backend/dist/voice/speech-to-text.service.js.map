@@ -1,0 +1,1 @@
+{"version":3,"file":"speech-to-text.service.js","sourceRoot":"","sources":["../../src/voice/speech-to-text.service.ts"],"names":[],"mappings":";;;AAEA;IAEqB,QAAQ;IAD3B,YACmB,QAA8B;wBAA9B,QAAQ;IACxB,CAAC;IAEJ,UAAU,CAAC,SAAiB;QAC1B,OAAO,IAAI,CAAC,QAAQ,CAAC,UAAU,CAAC,SAAS,CAAC,CAAC;IAC7C,CAAC;CACF"}
