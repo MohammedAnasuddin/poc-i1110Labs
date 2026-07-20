@@ -77,3 +77,38 @@ model ConversationAnalytics {
 
   createdAt        DateTime @default(now())
 }
+
+
+model AgentLog {
+  id                 String   @id @default(cuid())
+
+  sessionId          String
+
+  type               LogType
+
+  message            String?
+
+  toolName           String?
+
+  toolArguments      Json?
+
+  toolResponse       Json?
+
+  success            Boolean?
+
+  latency            Int?
+
+  promptTokens       Int?
+
+  completionTokens   Int?
+
+  createdAt          DateTime @default(now())
+}
+
+enum LogType {
+  USER
+  LLM
+  TOOL
+  ORDER
+  ERROR
+}

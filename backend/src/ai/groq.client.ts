@@ -6,7 +6,7 @@ export const groqClient = new Groq({
   apiKey: env.GROQ_API_KEY,
 });
 
-export const DEFAULT_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+export const DEFAULT_MODEL = "qwen/qwen3.6-27b";
 
 export const DEFAULT_COMPLETION_OPTIONS = {
   model: DEFAULT_MODEL,

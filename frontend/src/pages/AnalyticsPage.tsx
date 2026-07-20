@@ -53,7 +53,7 @@ export function AnalyticsPage() {
 
         {/* ================= KPI Row 1 ================= */}
 
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <StatCard
             title="Conversations"
             value={analytics?.conversations ?? 0}
@@ -65,15 +65,17 @@ export function AnalyticsPage() {
 
           <StatCard title="Tool Calls" value={analytics?.toolCalls ?? 0} />
 
-          <StatCard
+          {/* Calculated differently */}
+
+          {/* <StatCard
             title="Success Rate"
             value={`${analytics?.successRate.toFixed(0) ?? 0}%`}
-          />
+          /> */}
         </div>
 
         {/* ================= KPI Row 2 ================= */}
 
-        <div className="mt-4 grid grid-cols-5 gap-4">
+        <div className="mt-4 grid grid-cols-4 gap-4">
           <StatCard
             title="Prompt Tokens"
             value={analytics?.promptTokens ?? 0}
@@ -90,11 +92,11 @@ export function AnalyticsPage() {
             title="Avg Latency"
             value={`${analytics?.averageLatency.toFixed(0) ?? 0} ms`}
           />
-
-          <StatCard
+          {/* Using free version hence no cost */}
+          {/* <StatCard
             title="Total Cost"
             value={`$${analytics?.totalCost.toFixed(4) ?? "0.0000"}`}
-          />
+          /> */}
         </div>
 
         {/* ================= Row 1 ================= */}

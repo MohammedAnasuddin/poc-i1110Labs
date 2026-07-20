@@ -40,7 +40,7 @@ export function ThemeToggle() {
     >
       {dark ? <Sun size={16} /> : <Moon size={16} />}
 
-      {dark ? "Light" : "Dark"}
+      {/* {dark ? "Light" : "Dark"} */}
     </button>
   );
 }

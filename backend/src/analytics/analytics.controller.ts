@@ -15,3 +15,9 @@ export async function getConversationAnalyticsController(
 
   res.json(conversations);
 }
+
+export async function getLogsController(_req: Request, res: Response) {
+  const logs = await analyticsService.getLogs();
+
+  res.json(logs);
+}

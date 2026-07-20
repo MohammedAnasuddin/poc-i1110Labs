@@ -152,4 +152,27 @@ export class AnalyticsService {
       },
     });
   }
+
+  async log(data: Prisma.AgentLogCreateInput) {
+    return this.prisma.agentLog.create({
+      data,
+    });
+  }
+
+  async getLogs() {
+    return this.prisma.agentLog.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  async updateLogLatency(id: string, latency: number) {
+    return this.prisma.agentLog.update({
+      where: { id },
+      data: {
+        latency,
+      },
+    });
+  }
 }
