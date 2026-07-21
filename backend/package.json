@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Voice Ordering Agent Backend",
   "private": true,
-  "type": "NodeNext",
+  "type": "module",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
