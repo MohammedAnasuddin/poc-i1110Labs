@@ -7,7 +7,7 @@ import { SessionService } from "../sessions/session.service.js";
 import { SYSTEM_PROMPT } from "./system-prompt.js";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 import { analyticsService } from "../container.js";
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 
 const SESSION_TOOLS = new Set([
   "view_cart",

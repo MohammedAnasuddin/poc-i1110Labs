@@ -1,5 +1,5 @@
-import { PrismaClient } from "../generated/prisma/client";
-import { OrderStatus } from "../generated/prisma/enums";
+import { PrismaClient } from "@prisma/client";
+import { OrderStatus } from "@prisma/client";
 import { CartService } from "../cart/cart.service.js";
 
 import type { PlaceOrderResult } from "./order.types.js";

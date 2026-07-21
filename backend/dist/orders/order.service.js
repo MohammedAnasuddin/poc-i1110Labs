@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
-const enums_1 = require("../generated/prisma/enums");
+const client_1 = require("@prisma/client");
 const container_1 = require("../container");
 class OrderService {
     prisma;
@@ -28,7 +28,7 @@ class OrderService {
                 subtotal: cart.subtotal,
                 tax: 0,
                 total: cart.total,
-                status: enums_1.OrderStatus.PLACED,
+                status: client_1.OrderStatus.PLACED,
             },
         });
         await container_1.analyticsService.recordOrder();

@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "../generated/prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 import type { AnalyticsResponse, TurnMetrics } from "./analytics.types.js";
 import type { Session } from "../sessions/session.types.js";
