@@ -10,7 +10,17 @@ import { analyticsRouter } from "./analytics/analytics.routes.js";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
@@ -21,6 +31,9 @@ app.use("/api/chat", chatRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/voice", voiceRouter);
 app.use("/api/analytics", analyticsRouter);
+app.get("/", (_, res) => {
+  res.send("AI Voice Ordering Backend 🚀");
+});
 
 app.use(errorHandler);
 
