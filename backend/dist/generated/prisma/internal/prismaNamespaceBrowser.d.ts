@@ -27,6 +27,9 @@ export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullCl
 export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
 export declare const ModelName: {
     readonly Order: 'Order';
+    readonly Analytics: 'Analytics';
+    readonly ConversationAnalytics: 'ConversationAnalytics';
+    readonly AgentLog: 'AgentLog';
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -49,6 +52,50 @@ export declare const OrderScalarFieldEnum: {
     readonly placedAt: 'placedAt';
 };
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum];
+export declare const AnalyticsScalarFieldEnum: {
+    readonly id: 'id';
+    readonly conversations: 'conversations';
+    readonly turns: 'turns';
+    readonly ordersPlaced: 'ordersPlaced';
+    readonly toolCalls: 'toolCalls';
+    readonly successfulToolCalls: 'successfulToolCalls';
+    readonly failedToolCalls: 'failedToolCalls';
+    readonly promptTokens: 'promptTokens';
+    readonly completionTokens: 'completionTokens';
+    readonly totalLatency: 'totalLatency';
+    readonly totalCost: 'totalCost';
+    readonly updatedAt: 'updatedAt';
+};
+export type AnalyticsScalarFieldEnum = (typeof AnalyticsScalarFieldEnum)[keyof typeof AnalyticsScalarFieldEnum];
+export declare const ConversationAnalyticsScalarFieldEnum: {
+    readonly id: 'id';
+    readonly sessionId: 'sessionId';
+    readonly promptTokens: 'promptTokens';
+    readonly completionTokens: 'completionTokens';
+    readonly totalTokens: 'totalTokens';
+    readonly latency: 'latency';
+    readonly turns: 'turns';
+    readonly toolCalls: 'toolCalls';
+    readonly startedAt: 'startedAt';
+    readonly endedAt: 'endedAt';
+    readonly createdAt: 'createdAt';
+};
+export type ConversationAnalyticsScalarFieldEnum = (typeof ConversationAnalyticsScalarFieldEnum)[keyof typeof ConversationAnalyticsScalarFieldEnum];
+export declare const AgentLogScalarFieldEnum: {
+    readonly id: 'id';
+    readonly sessionId: 'sessionId';
+    readonly type: 'type';
+    readonly message: 'message';
+    readonly toolName: 'toolName';
+    readonly toolArguments: 'toolArguments';
+    readonly toolResponse: 'toolResponse';
+    readonly success: 'success';
+    readonly latency: 'latency';
+    readonly promptTokens: 'promptTokens';
+    readonly completionTokens: 'completionTokens';
+    readonly createdAt: 'createdAt';
+};
+export type AgentLogScalarFieldEnum = (typeof AgentLogScalarFieldEnum)[keyof typeof AgentLogScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: 'asc';
     readonly desc: 'desc';
@@ -58,6 +105,11 @@ export declare const JsonNullValueInput: {
     readonly JsonNull: import("@prisma/client-runtime-utils").JsonNullClass;
 };
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
+export declare const NullableJsonNullValueInput: {
+    readonly DbNull: import("@prisma/client-runtime-utils").DbNullClass;
+    readonly JsonNull: import("@prisma/client-runtime-utils").JsonNullClass;
+};
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
 export declare const QueryMode: {
     readonly default: 'default';
     readonly insensitive: 'insensitive';
@@ -69,3 +121,8 @@ export declare const JsonNullValueFilter: {
     readonly AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
 };
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
+export declare const NullsOrder: {
+    readonly first: 'first';
+    readonly last: 'last';
+};
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

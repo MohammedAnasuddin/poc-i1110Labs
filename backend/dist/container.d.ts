@@ -9,6 +9,8 @@ import { AIAgentService } from "./ai/ai-agent.service.js";
 import { SpeechToTextService } from "./voice/speech-to-text.service.js";
 import { TextToSpeechService } from "./voice/text-to-speech.service.js";
 import { VoiceConversationService } from "./voice/voice-conversation.service.js";
+import { AnalyticsService } from "./analytics/analytics.service.js";
+export declare const analyticsService: AnalyticsService;
 export declare const menuService: MenuService;
 export declare const sessionService: SessionService;
 export declare const pricingService: PricingService;

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ToolRegistry = void 0;
 const tool_utils_js_1 = require("../tools/tool.utils.js");
+const container_js_1 = require("../container.js");
 class ToolRegistry {
     menuTools;
     cartTools;
@@ -30,9 +31,18 @@ class ToolRegistry {
         const tool = this.tools.get(toolName);
         console.log("Executing Tool:", toolName);
         if (!tool) {
+            await container_js_1.analyticsService.recordToolCall(false);
             return (0, tool_utils_js_1.failure)(`Unknown tool: ${toolName}`);
         }
-        return await tool(args);
+        try {
+            const result = await tool(args);
+            await container_js_1.analyticsService.recordToolCall(true);
+            return result;
+        }
+        catch (error) {
+            await container_js_1.analyticsService.recordToolCall(false);
+            throw error;
+        }
     }
     getAvailableTools() {
         return [...this.tools.keys()];

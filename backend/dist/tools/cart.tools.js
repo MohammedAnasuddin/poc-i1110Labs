@@ -31,7 +31,7 @@ class CartTools {
     removeFromCart({ sessionId, itemId, }) {
         try {
             const cart = this.cartService.getCart(sessionId);
-            const matches = cart.items.filter((item) => item.selection.itemId === itemId || item.id === itemId);
+            const matches = cart.items.filter((item) => item.itemId === itemId || item.id === itemId);
             if (matches.length === 0) {
                 return (0, tool_utils_js_1.failure)("Item is not in the cart.");
             }
@@ -42,9 +42,9 @@ class CartTools {
                 success: false,
                 error: "MULTIPLE_MATCHES",
                 data: matches.map((item) => ({
-                    itemId: item.selection.itemId,
-                    quantity: item.selection.quantity,
-                    modifiers: item.selection.modifiers,
+                    itemId: item.itemId,
+                    quantity: item.quantity,
+                    modifiers: item.modifiers,
                 })),
             };
         }

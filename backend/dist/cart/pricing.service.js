@@ -2,13 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PricingService = void 0;
 class PricingService {
-    calculateItemPrice(menuItem, selection) {
+    calculateUnitPrice(menuItem, selection) {
         const modifierPrice = this.calculateModifierPrice(menuItem.modifierGroups, selection.modifiers);
-        return (menuItem.basePrice + modifierPrice) * selection.quantity;
+        return menuItem.basePrice + modifierPrice;
+    }
+    calculateItemPrice(menuItem, selection) {
+        return this.calculateUnitPrice(menuItem, selection) * selection.quantity;
     }
     calculateCartSummary(cart, itemPrices) {
         const subtotal = itemPrices.reduce((sum, price) => sum + price, 0);
-        const totalItems = cart.items.reduce((sum, item) => sum + item.selection.quantity, 0);
+        const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
         return {
             items: cart.items,
             totalItems,

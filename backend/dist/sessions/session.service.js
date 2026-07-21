@@ -18,10 +18,19 @@ class SessionService {
             cart: {
                 items: [],
             },
+            analytics: {
+                promptTokens: 0,
+                completionTokens: 0,
+                latency: 0,
+                turns: 0,
+                toolCalls: 0,
+                startedAt: new Date(),
+            },
             createdAt: new Date(),
             updatedAt: new Date(),
             messages: [],
         };
+        console.log("✅ Session Created:", session.id);
         this.sessions.set(session.id, session);
         return session;
     }
@@ -37,8 +46,10 @@ class SessionService {
     }
     endSession(sessionId) {
         const session = this.getSession(sessionId);
+        console.log("🛑 Ending Session:", sessionId);
         session.status = session_types_js_1.SessionStatus.TERMINATED;
         session.updatedAt = new Date();
+        return session;
     }
     resetSession(sessionId) {
         const session = this.getSession(sessionId);
@@ -75,10 +86,10 @@ class SessionService {
                 id: cartItem.id,
                 itemId: menuItem.id,
                 name: menuItem.name,
-                price: menuItem.price,
+                price: menuItem.basePrice,
                 quantity: cartItem.selection.quantity,
                 modifiers: cartItem.selection.modifiers,
-                subtotal: menuItem.price * cartItem.selection.quantity,
+                subtotal: menuItem.basePrice * cartItem.selection.quantity,
             };
         });
         const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -89,6 +100,22 @@ class SessionService {
             subtotal,
             total: subtotal,
         };
+    }
+    recordTurn(sessionId, promptTokens, completionTokens, latency) {
+        const session = this.getSession(sessionId);
+        session.analytics.promptTokens += promptTokens;
+        session.analytics.completionTokens += completionTokens;
+        session.analytics.latency += latency;
+        session.analytics.turns++;
+        session.updatedAt = new Date();
+    }
+    recordToolCall(sessionId) {
+        const session = this.getSession(sessionId);
+        session.analytics.toolCalls++;
+        session.updatedAt = new Date();
+    }
+    getConversationAnalytics(sessionId) {
+        return this.getSession(sessionId).analytics;
     }
 }
 exports.SessionService = SessionService;

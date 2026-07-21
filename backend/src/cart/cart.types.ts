@@ -1,4 +1,4 @@
-import type { MenuSelection } from "../menu/menu.types.js";
+import type { MenuSelection, SelectedModifier } from "../menu/menu.types.js";
 
 export interface CartItem {
   id: string;
@@ -11,7 +11,7 @@ export interface Cart {
 }
 
 export interface CartSummary {
-  items: CartItem[];
+  items: CartResponseItem[];
 
   totalItems: number;
 

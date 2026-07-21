@@ -9,9 +9,16 @@
 * 🟢 You can import this file directly.
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderStatus = void 0;
+exports.LogType = exports.OrderStatus = void 0;
 exports.OrderStatus = {
     PLACED: 'PLACED',
     FAILED: 'FAILED'
+};
+exports.LogType = {
+    USER: 'USER',
+    LLM: 'LLM',
+    TOOL: 'TOOL',
+    ORDER: 'ORDER',
+    ERROR: 'ERROR'
 };
 //# sourceMappingURL=enums.js.map

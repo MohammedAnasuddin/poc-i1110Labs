@@ -20,12 +20,18 @@ export function createSessionController(
   }
 }
 
-export async function getConversationController(req, res) {
-  const { sessionId } = req.params;
+export async function getConversationController(req: Request, res: Response) {
+  const sessionId = req.params.sessionId;
+
+  if (typeof sessionId !== "string") {
+    return res.status(400).json({
+      error: "Session id required",
+    });
+  }
 
   const messages = sessionService.getConversation(sessionId);
 
-  res.json({
+  return res.json({
     messages,
   });
 }
@@ -33,11 +39,17 @@ export async function getConversationController(req, res) {
 // controllers/session.controller.ts
 
 export async function getCartController(req: Request, res: Response) {
-  const { sessionId } = req.params;
+  const sessionId = req.params.sessionId;
+
+  if (typeof sessionId !== "string") {
+    return res.status(400).json({
+      error: "Session id required",
+    });
+  }
 
   const cart = cartService.getCart(sessionId);
 
-  res.json(cart);
+  return res.json(cart);
 }
 
 export async function endSessionController(
@@ -46,11 +58,18 @@ export async function endSessionController(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { sessionId } = req.params;
+    const sessionId = req.params.sessionId;
 
-    console.log("POST /sessions/:id/end", sessionId);
+    if (typeof sessionId !== "string") {
+      res.status(400).json({
+        error: "Session id required",
+      });
+      return;
+    }
 
     const session = sessionService.endSession(sessionId);
+
+    console.log("POST /sessions/:id/end", sessionId);
 
     await analyticsService.recordConversationEnd(session);
 

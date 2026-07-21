@@ -128,5 +128,38 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get order(): Prisma.OrderDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    /**
+     * `prisma.analytics`: Exposes CRUD operations for the **Analytics** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more Analytics
+      * const analytics = await prisma.analytics.findMany()
+      * ```
+      */
+    get analytics(): Prisma.AnalyticsDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.conversationAnalytics`: Exposes CRUD operations for the **ConversationAnalytics** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more ConversationAnalytics
+      * const conversationAnalytics = await prisma.conversationAnalytics.findMany()
+      * ```
+      */
+    get conversationAnalytics(): Prisma.ConversationAnalyticsDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    /**
+     * `prisma.agentLog`: Exposes CRUD operations for the **AgentLog** model.
+      * Example usage:
+      * ```ts
+      * // Fetch zero or more AgentLogs
+      * const agentLogs = await prisma.agentLog.findMany()
+      * ```
+      */
+    get agentLog(): Prisma.AgentLogDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
 }
 export declare function getPrismaClientClass(): PrismaClientConstructor;

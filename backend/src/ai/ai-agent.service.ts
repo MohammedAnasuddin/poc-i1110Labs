@@ -7,6 +7,7 @@ import { SessionService } from "../sessions/session.service.js";
 import { SYSTEM_PROMPT } from "./system-prompt.js";
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 import { analyticsService } from "../container.js";
+import { Prisma } from "../generated/prisma/client";
 
 const SESSION_TOOLS = new Set([
   "view_cart",
@@ -73,11 +74,17 @@ export class AIAgentService {
           tools: toolDefinitions,
         });
 
+        const choice = response.choices[0];
+
+        if (!choice) {
+          throw new Error("No LLM choice returned.");
+        }
+
         console.log("\n========== LLM RESPONSE ==========");
-        console.dir(response.choices[0].message, { depth: null });
+        console.dir(choice.message, { depth: null });
         console.log("=================================\n");
 
-        const assistantMessage = response.choices[0]?.message;
+        const assistantMessage = choice.message;
 
         if (!assistantMessage) {
           throw new Error("No response received.");
@@ -140,9 +147,11 @@ export class AIAgentService {
 
             toolName,
 
-            toolArguments: toolArgs,
+            toolArguments: toolArgs as Prisma.InputJsonValue,
 
-            toolResponse: result,
+            toolResponse: JSON.parse(
+              JSON.stringify(result),
+            ) as Prisma.InputJsonValue,
 
             success: true,
           });

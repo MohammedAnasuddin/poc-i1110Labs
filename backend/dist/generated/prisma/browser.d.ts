@@ -7,3 +7,18 @@ export * from './enums.js';
  *
  */
 export type Order = Prisma.OrderModel;
+/**
+ * Model Analytics
+ *
+ */
+export type Analytics = Prisma.AnalyticsModel;
+/**
+ * Model ConversationAnalytics
+ *
+ */
+export type ConversationAnalytics = Prisma.ConversationAnalyticsModel;
+/**
+ * Model AgentLog
+ *
+ */
+export type AgentLog = Prisma.AgentLogModel;

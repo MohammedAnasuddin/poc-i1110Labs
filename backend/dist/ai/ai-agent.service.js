@@ -4,6 +4,7 @@ exports.AIAgentService = void 0;
 const groq_client_js_1 = require("./groq.client.js");
 const tool_definitions_js_1 = require("../tools/tool-definitions.js");
 const system_prompt_js_1 = require("./system-prompt.js");
+const container_js_1 = require("../container.js");
 const SESSION_TOOLS = new Set([
     "view_cart",
     "add_to_cart",
@@ -22,93 +23,143 @@ class AIAgentService {
         this.sessionService = sessionService;
     }
     async processMessage(sessionId, userMessage) {
-        this.sessionService.appendMessage(sessionId, {
-            role: "user",
-            content: userMessage,
-        });
-        const startedAt = Date.now();
-        let messages;
-        let finalResponse = null;
-        let iteration = 0;
-        while (iteration < MAX_TOOL_ITERATIONS) {
-            iteration++;
-            messages = [
-                {
-                    role: "system",
-                    content: system_prompt_js_1.SYSTEM_PROMPT,
-                },
-                ...this.sessionService.getConversation(sessionId),
-            ];
-            const response = await groq_client_js_1.groqClient.chat.completions.create({
-                ...groq_client_js_1.DEFAULT_COMPLETION_OPTIONS,
-                messages,
-                tools: tool_definitions_js_1.toolDefinitions,
+        try {
+            // ================= USER =================
+            this.sessionService.appendMessage(sessionId, {
+                role: "user",
+                content: userMessage,
             });
-            console.log("\n========== LLM RESPONSE ==========");
-            console.dir(response.choices[0].message, { depth: null });
-            console.log("=================================\n");
-            const assistantMessage = response.choices[0]?.message;
-            if (!assistantMessage) {
-                throw new Error("No response received.");
+            await container_js_1.analyticsService.recordConversation();
+            await container_js_1.analyticsService.log({
+                sessionId,
+                type: "USER",
+                message: userMessage,
+            });
+            const startedAt = Date.now();
+            let messages;
+            let finalResponse = null;
+            let iteration = 0;
+            let llmLogId = null;
+            while (iteration < MAX_TOOL_ITERATIONS) {
+                iteration++;
+                messages = [
+                    {
+                        role: "system",
+                        content: system_prompt_js_1.SYSTEM_PROMPT,
+                    },
+                    ...this.sessionService.getConversation(sessionId),
+                ];
+                const response = await groq_client_js_1.groqClient.chat.completions.create({
+                    ...groq_client_js_1.DEFAULT_COMPLETION_OPTIONS,
+                    messages,
+                    tools: tool_definitions_js_1.toolDefinitions,
+                });
+                const choice = response.choices[0];
+                if (!choice) {
+                    throw new Error("No LLM choice returned.");
+                }
+                console.log("\n========== LLM RESPONSE ==========");
+                console.dir(choice.message, { depth: null });
+                console.log("=================================\n");
+                const assistantMessage = choice.message;
+                if (!assistantMessage) {
+                    throw new Error("No response received.");
+                }
+                // ================= LLM =================
+                const log = await container_js_1.analyticsService.log({
+                    sessionId,
+                    type: "LLM",
+                    message: assistantMessage.content ?? "",
+                    promptTokens: response.usage?.prompt_tokens ?? null,
+                    completionTokens: response.usage?.completion_tokens ?? null,
+                });
+                llmLogId = log.id;
+                if (!assistantMessage.tool_calls?.length) {
+                    finalResponse = response;
+                    break;
+                }
+                this.sessionService.appendMessage(sessionId, {
+                    role: "assistant",
+                    content: assistantMessage.content ?? "",
+                    tool_calls: assistantMessage.tool_calls,
+                });
+                // ================= TOOLS =================
+                for (const toolCall of assistantMessage.tool_calls) {
+                    const toolName = toolCall.function.name;
+                    let args;
+                    try {
+                        args = JSON.parse(toolCall.function.arguments);
+                    }
+                    catch {
+                        throw new Error(`Invalid tool arguments for ${toolCall.function.name}`);
+                    }
+                    const toolArgs = {
+                        ...args,
+                    };
+                    if (SESSION_TOOLS.has(toolName)) {
+                        toolArgs.sessionId = sessionId;
+                    }
+                    const result = await this.toolRegistry.execute(toolName, toolArgs);
+                    this.sessionService.recordToolCall(sessionId);
+                    await container_js_1.analyticsService.log({
+                        sessionId,
+                        type: "TOOL",
+                        toolName,
+                        toolArguments: toolArgs,
+                        toolResponse: JSON.parse(JSON.stringify(result)),
+                        success: true,
+                    });
+                    console.log("\n========== TOOL CALL ==========");
+                    console.log("Tool:", toolName);
+                    console.log("Arguments:");
+                    console.dir(toolArgs, { depth: null });
+                    console.log("Result:");
+                    console.dir(result, { depth: null });
+                    console.log("===============================\n");
+                    this.sessionService.appendMessage(sessionId, {
+                        role: "tool",
+                        tool_call_id: toolCall.id,
+                        content: JSON.stringify(result),
+                    });
+                }
             }
-            if (!assistantMessage.tool_calls?.length) {
-                finalResponse = response;
-                break;
+            if (!finalResponse) {
+                throw new Error(`Maximum tool iterations (${MAX_TOOL_ITERATIONS}) exceeded.`);
+            }
+            const latency = Date.now() - startedAt;
+            const promptTokens = finalResponse.usage?.prompt_tokens ?? 0;
+            const completionTokens = finalResponse.usage?.completion_tokens ?? 0;
+            this.sessionService.recordTurn(sessionId, promptTokens, completionTokens, latency);
+            await container_js_1.analyticsService.recordTurn({
+                latency,
+                promptTokens,
+                completionTokens,
+                cost: 0,
+            });
+            if (llmLogId !== null) {
+                await container_js_1.analyticsService.updateLogLatency(llmLogId, latency);
             }
             this.sessionService.appendMessage(sessionId, {
                 role: "assistant",
-                content: assistantMessage.content ?? "",
-                tool_calls: assistantMessage.tool_calls,
+                content: finalResponse.choices[0]?.message.content ?? "",
             });
-            // Otherwise...
-            // Execute every tool
-            for (const toolCall of assistantMessage.tool_calls) {
-                const toolName = toolCall.function.name;
-                let args;
-                try {
-                    args = JSON.parse(toolCall.function.arguments);
-                }
-                catch {
-                    throw new Error(`Invalid tool arguments for ${toolCall.function.name}`);
-                }
-                const toolArgs = {
-                    ...args,
-                };
-                if (SESSION_TOOLS.has(toolName)) {
-                    toolArgs.sessionId = sessionId;
-                }
-                const result = await this.toolRegistry.execute(toolName, toolArgs);
-                console.log("\n========== TOOL CALL ==========");
-                console.log("Tool:", toolName);
-                console.log("Arguments:");
-                console.dir(toolArgs, { depth: null });
-                console.log("Result:");
-                console.dir(result, { depth: null });
-                console.log("===============================\n");
-                this.sessionService.appendMessage(sessionId, {
-                    role: "tool",
-                    tool_call_id: toolCall.id,
-                    content: JSON.stringify(result),
-                });
-            }
-            // Append tool results
-            // Continue loop
+            return {
+                message: finalResponse.choices[0]?.message.content ?? "",
+                promptTokens,
+                completionTokens,
+                totalTokens: promptTokens + completionTokens,
+                latency,
+            };
         }
-        if (!finalResponse) {
-            throw new Error(`Maximum tool iterations (${MAX_TOOL_ITERATIONS}) exceeded.`);
+        catch (error) {
+            await container_js_1.analyticsService.log({
+                sessionId,
+                type: "ERROR",
+                message: error instanceof Error ? error.message : String(error),
+                success: false,
+            });
+            throw error;
         }
-        const latency = Date.now() - startedAt;
-        this.sessionService.appendMessage(sessionId, {
-            role: "assistant",
-            content: finalResponse.choices[0]?.message.content ?? "",
-        });
-        return {
-            message: finalResponse.choices[0]?.message.content ?? "",
-            promptTokens: finalResponse.usage?.prompt_tokens ?? 0,
-            latency,
-            completionTokens: finalResponse.usage?.completion_tokens ?? 0,
-            totalTokens: finalResponse.usage?.total_tokens ?? 0,
-        };
     }
 }
 exports.AIAgentService = AIAgentService;

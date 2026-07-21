@@ -9,7 +9,7 @@ const env_js_1 = require("../config/env.js");
 exports.groqClient = new groq_sdk_1.default({
     apiKey: env_js_1.env.GROQ_API_KEY,
 });
-exports.DEFAULT_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+exports.DEFAULT_MODEL = "qwen/qwen3.6-27b";
 exports.DEFAULT_COMPLETION_OPTIONS = {
     model: exports.DEFAULT_MODEL,
     temperature: 0.2,

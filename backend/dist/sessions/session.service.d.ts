@@ -8,7 +8,7 @@ export declare class SessionService {
     createSession(): Session;
     getSession(sessionId: string): Session;
     hasSession(sessionId: string): boolean;
-    endSession(sessionId: string): void;
+    endSession(sessionId: string): Session;
     resetSession(sessionId: string): void;
     getAllSessions(): Session[];
     appendMessage(sessionId: string, message: ChatCompletionMessageParam): void;
@@ -19,7 +19,7 @@ export declare class SessionService {
             id: string;
             itemId: string;
             name: string;
-            price: any;
+            price: number;
             quantity: number;
             modifiers: import("../menu/menu.types.js").SelectedModifier[];
             subtotal: number;
@@ -27,5 +27,15 @@ export declare class SessionService {
         totalItems: number;
         subtotal: number;
         total: number;
+    };
+    recordTurn(sessionId: string, promptTokens: number, completionTokens: number, latency: number): void;
+    recordToolCall(sessionId: string): void;
+    getConversationAnalytics(sessionId: string): {
+        promptTokens: number;
+        completionTokens: number;
+        latency: number;
+        turns: number;
+        toolCalls: number;
+        startedAt: Date;
     };
 }

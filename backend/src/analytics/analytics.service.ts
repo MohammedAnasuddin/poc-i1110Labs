@@ -48,23 +48,23 @@ export class AnalyticsService {
   }
 
   async recordToolCall(success: boolean) {
-    await this.update({
+    const updateData: any = {
       toolCalls: {
         increment: 1,
       },
+    };
 
-      successfulToolCalls: success
-        ? {
-            increment: 1,
-          }
-        : undefined,
+    if (success) {
+      updateData.successfulToolCalls = {
+        increment: 1,
+      };
+    } else {
+      updateData.failedToolCalls = {
+        increment: 1,
+      };
+    }
 
-      failedToolCalls: !success
-        ? {
-            increment: 1,
-          }
-        : undefined,
-    });
+    await this.update(updateData);
   }
 
   async recordOrder() {

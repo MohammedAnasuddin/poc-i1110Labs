@@ -1,4 +1,4 @@
-import type { Cart, CartSummary } from "./cart.types.js";
+import type { Cart, CartSummary, CartResponse } from "./cart.types.js";
 
 import type {
   MenuItem,
@@ -21,7 +21,7 @@ export class PricingService {
     return this.calculateUnitPrice(menuItem, selection) * selection.quantity;
   }
 
-  calculateCartSummary(cart: CartSummary, itemPrices: number[]): CartSummary {
+  calculateCartSummary(cart: CartResponse, itemPrices: number[]): CartSummary {
     const subtotal = itemPrices.reduce((sum, price) => sum + price, 0);
 
     const totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);

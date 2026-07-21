@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.voiceConversationService = exports.textToSpeechService = exports.speechToTextService = exports.aiAgentService = exports.toolRegistry = exports.cartTools = exports.menuTools = exports.cartService = exports.pricingService = exports.sessionService = exports.menuService = void 0;
+exports.voiceConversationService = exports.textToSpeechService = exports.speechToTextService = exports.aiAgentService = exports.toolRegistry = exports.cartTools = exports.menuTools = exports.cartService = exports.pricingService = exports.sessionService = exports.menuService = exports.analyticsService = void 0;
 const menu_service_js_1 = require("./menu/menu.service.js");
 const pricing_service_js_1 = require("./cart/pricing.service.js");
 const cart_service_js_1 = require("./cart/cart.service.js");
@@ -17,6 +17,8 @@ const speech_to_text_service_js_1 = require("./voice/speech-to-text.service.js")
 const text_to_speech_service_js_1 = require("./voice/text-to-speech.service.js");
 const edge_tts_provider_js_1 = require("./voice/providers/tts/edge-tts.provider.js");
 const voice_conversation_service_js_1 = require("./voice/voice-conversation.service.js");
+const analytics_service_js_1 = require("./analytics/analytics.service.js");
+exports.analyticsService = new analytics_service_js_1.AnalyticsService(prisma_js_1.prisma);
 // Services
 exports.menuService = new menu_service_js_1.MenuService();
 exports.sessionService = new session_service_1.SessionService(exports.menuService);

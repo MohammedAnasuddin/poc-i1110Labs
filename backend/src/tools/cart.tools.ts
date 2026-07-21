@@ -58,7 +58,7 @@ export class CartTools {
       const cart = this.cartService.getCart(sessionId);
 
       const matches = cart.items.filter(
-        (item) => item.selection.itemId === itemId || item.id === itemId,
+        (item) => item.itemId === itemId || item.id === itemId,
       );
 
       if (matches.length === 0) {
@@ -75,9 +75,9 @@ export class CartTools {
         error: "MULTIPLE_MATCHES",
 
         data: matches.map((item) => ({
-          itemId: item.selection.itemId,
-          quantity: item.selection.quantity,
-          modifiers: item.selection.modifiers,
+          itemId: item.itemId,
+          quantity: item.quantity,
+          modifiers: item.modifiers,
         })),
       };
     } catch (error) {

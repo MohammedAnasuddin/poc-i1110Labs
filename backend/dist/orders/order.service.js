@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const enums_1 = require("../generated/prisma/enums");
+const container_1 = require("../container");
 class OrderService {
     prisma;
     cartService;
@@ -30,6 +31,7 @@ class OrderService {
                 status: enums_1.OrderStatus.PLACED,
             },
         });
+        await container_1.analyticsService.recordOrder();
         console.log("\n✅ Prisma returned:");
         console.dir(order, { depth: null });
         console.log("\nVerifying order exists in database...");

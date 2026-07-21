@@ -4,7 +4,12 @@ import { MenuService } from "../menu/menu.service.js";
 import { SessionService } from "../sessions/session.service";
 import type { MenuSelection } from "../menu/menu.types.js";
 
-import type { Cart, CartItem, CartSummary } from "./cart.types.js";
+import type {
+  Cart,
+  CartItem,
+  CartSummary,
+  CartResponse,
+} from "./cart.types.js";
 
 import { PricingService } from "./pricing.service.js";
 
@@ -149,7 +154,7 @@ export class CartService {
   getCartSummary(sessionId: string): CartSummary {
     const cart = this.getCart(sessionId);
 
-    const itemPrices = cart.items.map((item) => item.totalPrice);
+    const itemPrices = cart.items.map((item: CartResponse["items"][number]) => item.totalPrice);
 
     return this.pricingService.calculateCartSummary(cart, itemPrices);
   }

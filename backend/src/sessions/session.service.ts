@@ -115,10 +115,10 @@ export class SessionService {
         id: cartItem.id,
         itemId: menuItem.id,
         name: menuItem.name,
-        price: menuItem.price,
+        price: menuItem.basePrice,
         quantity: cartItem.selection.quantity,
         modifiers: cartItem.selection.modifiers,
-        subtotal: menuItem.price * cartItem.selection.quantity,
+        subtotal: menuItem.basePrice * cartItem.selection.quantity,
       };
     });
 

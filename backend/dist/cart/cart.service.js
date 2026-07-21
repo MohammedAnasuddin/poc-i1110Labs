@@ -12,7 +12,39 @@ class CartService {
         this.pricingService = pricingService;
     }
     getCart(sessionId) {
-        return this.sessionService.getSession(sessionId).cart;
+        const cart = this.sessionService.getSession(sessionId).cart;
+        const items = cart.items.map((item) => {
+            const menuItem = this.menuService.getItemById(item.selection.itemId);
+            if (!menuItem) {
+                throw new Error(`Menu item '${item.selection.itemId}' not found.`);
+            }
+            const unitPrice = this.pricingService.calculateUnitPrice(menuItem, item.selection);
+            const totalPrice = this.pricingService.calculateItemPrice(menuItem, item.selection);
+            // console.log({
+            //   name: menuItem.name,
+            //   basePrice: menuItem.basePrice,
+            //   quantity: item.selection.quantity,
+            //   unitPrice,
+            //   totalPrice,
+            // });
+            return {
+                id: item.id,
+                itemId: menuItem.id,
+                name: menuItem.name,
+                quantity: item.selection.quantity,
+                unitPrice,
+                totalPrice,
+                modifiers: item.selection.modifiers,
+            };
+        });
+        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+        const subtotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
+        return {
+            items,
+            totalItems,
+            subtotal,
+            total: subtotal,
+        };
     }
     addItem(sessionId, selection) {
         const session = this.sessionService.getSession(sessionId);
@@ -60,13 +92,7 @@ class CartService {
     }
     getCartSummary(sessionId) {
         const cart = this.getCart(sessionId);
-        const itemPrices = cart.items.map((item) => {
-            const menuItem = this.menuService.getItemById(item.selection.itemId);
-            if (!menuItem) {
-                throw new Error(`Menu item '${item.selection.itemId}' not found.`);
-            }
-            return this.pricingService.calculateItemPrice(menuItem, item.selection);
-        });
+        const itemPrices = cart.items.map((item) => item.totalPrice);
         return this.pricingService.calculateCartSummary(cart, itemPrices);
     }
 }

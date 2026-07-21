@@ -48,7 +48,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JsonNullValueFilter = exports.QueryMode = exports.JsonNullValueInput = exports.SortOrder = exports.OrderScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
+exports.NullsOrder = exports.JsonNullValueFilter = exports.QueryMode = exports.NullableJsonNullValueInput = exports.JsonNullValueInput = exports.SortOrder = exports.AgentLogScalarFieldEnum = exports.ConversationAnalyticsScalarFieldEnum = exports.AnalyticsScalarFieldEnum = exports.OrderScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.Decimal = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/index-browser"));
 exports.Decimal = runtime.Decimal;
 exports.NullTypes = {
@@ -75,7 +75,10 @@ exports.JsonNull = runtime.JsonNull;
  */
 exports.AnyNull = runtime.AnyNull;
 exports.ModelName = {
-    Order: 'Order'
+    Order: 'Order',
+    Analytics: 'Analytics',
+    ConversationAnalytics: 'ConversationAnalytics',
+    AgentLog: 'AgentLog'
 };
 /*
  * Enums
@@ -98,11 +101,56 @@ exports.OrderScalarFieldEnum = {
     status: 'status',
     placedAt: 'placedAt'
 };
+exports.AnalyticsScalarFieldEnum = {
+    id: 'id',
+    conversations: 'conversations',
+    turns: 'turns',
+    ordersPlaced: 'ordersPlaced',
+    toolCalls: 'toolCalls',
+    successfulToolCalls: 'successfulToolCalls',
+    failedToolCalls: 'failedToolCalls',
+    promptTokens: 'promptTokens',
+    completionTokens: 'completionTokens',
+    totalLatency: 'totalLatency',
+    totalCost: 'totalCost',
+    updatedAt: 'updatedAt'
+};
+exports.ConversationAnalyticsScalarFieldEnum = {
+    id: 'id',
+    sessionId: 'sessionId',
+    promptTokens: 'promptTokens',
+    completionTokens: 'completionTokens',
+    totalTokens: 'totalTokens',
+    latency: 'latency',
+    turns: 'turns',
+    toolCalls: 'toolCalls',
+    startedAt: 'startedAt',
+    endedAt: 'endedAt',
+    createdAt: 'createdAt'
+};
+exports.AgentLogScalarFieldEnum = {
+    id: 'id',
+    sessionId: 'sessionId',
+    type: 'type',
+    message: 'message',
+    toolName: 'toolName',
+    toolArguments: 'toolArguments',
+    toolResponse: 'toolResponse',
+    success: 'success',
+    latency: 'latency',
+    promptTokens: 'promptTokens',
+    completionTokens: 'completionTokens',
+    createdAt: 'createdAt'
+};
 exports.SortOrder = {
     asc: 'asc',
     desc: 'desc'
 };
 exports.JsonNullValueInput = {
+    JsonNull: exports.JsonNull
+};
+exports.NullableJsonNullValueInput = {
+    DbNull: exports.DbNull,
     JsonNull: exports.JsonNull
 };
 exports.QueryMode = {
@@ -113,5 +161,9 @@ exports.JsonNullValueFilter = {
     DbNull: exports.DbNull,
     JsonNull: exports.JsonNull,
     AnyNull: exports.AnyNull
+};
+exports.NullsOrder = {
+    first: 'first',
+    last: 'last'
 };
 //# sourceMappingURL=prismaNamespaceBrowser.js.map
