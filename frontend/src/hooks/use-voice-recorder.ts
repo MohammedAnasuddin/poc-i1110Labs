@@ -11,23 +11,94 @@ export function useVoiceRecorder(sessionId: string) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const stateRef = useRef<VoiceState>("idle");
+  const conversationActiveRef = useRef(false);
+
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const silenceFrameRef = useRef<number>();
 
   useEffect(() => {
-    if (state !== "listening") {
-      setDuration(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setDuration((previous) => previous + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
+    stateRef.current = state;
   }, [state]);
 
   function cleanup() {
-    mediaRecorderRef.current = null;
     chunksRef.current = [];
+
+    if (silenceFrameRef.current) {
+      cancelAnimationFrame(silenceFrameRef.current);
+    }
+
+    analyserRef.current?.disconnect();
+
+    if (audioContextRef.current?.state !== "closed") {
+      audioContextRef.current?.close();
+    }
+
+    analyserRef.current = null;
+    audioContextRef.current = null;
+  }
+
+  function monitorSilence(stream: MediaStream) {
+    const context = new AudioContext();
+
+    audioContextRef.current = context;
+
+    const source = context.createMediaStreamSource(stream);
+
+    const analyser = context.createAnalyser();
+
+    analyser.fftSize = 2048;
+
+    source.connect(analyser);
+
+    analyserRef.current = analyser;
+
+    const data = new Uint8Array(analyser.fftSize);
+
+    let silenceStarted = 0;
+
+    const recordingStarted = Date.now();
+
+    function loop() {
+      if (!analyserRef.current) return;
+
+      analyserRef.current.getByteTimeDomainData(data);
+
+      let sum = 0;
+
+      for (const value of data) {
+        const x = (value - 128) / 128;
+
+        sum += x * x;
+      }
+
+      const volume = Math.sqrt(sum / data.length);
+
+      if (Date.now() - recordingStarted < 1500) {
+        silenceFrameRef.current = requestAnimationFrame(loop);
+
+        return;
+      }
+
+      if (volume < 0.015) {
+        if (!silenceStarted) {
+          silenceStarted = Date.now();
+        }
+
+        if (Date.now() - silenceStarted > 1200) {
+          stopRecording();
+
+          return;
+        }
+      } else {
+        silenceStarted = 0;
+      }
+
+      silenceFrameRef.current = requestAnimationFrame(loop);
+    }
+
+    loop();
   }
 
   async function playResponse(blob: Blob) {
@@ -42,13 +113,24 @@ export function useVoiceRecorder(sessionId: string) {
     };
 
     audio.onended = () => {
+      console.log("🔊 AI finished speaking");
+
       URL.revokeObjectURL(url);
 
       audioRef.current = null;
 
-      cleanup();
-
       setState("idle");
+
+      console.log("Conversation active:", conversationActiveRef.current);
+
+      if (conversationActiveRef.current) {
+        console.log("⏳ Restarting recorder...");
+
+        setTimeout(() => {
+          console.log("🎤 Calling startRecording()");
+          startRecording();
+        }, 300);
+      }
     };
 
     audio.onerror = () => {
@@ -65,7 +147,18 @@ export function useVoiceRecorder(sessionId: string) {
   }
 
   async function startRecording() {
-    if (state !== "idle") return;
+    console.log(
+      "startRecording()",
+      stateRef.current,
+      conversationActiveRef.current,
+    );
+    cleanup();
+
+    mediaRecorderRef.current = null;
+
+    if (mediaRecorderRef.current?.state === "recording") {
+      return;
+    }
 
     if (!sessionId) return;
 
@@ -86,6 +179,8 @@ export function useVoiceRecorder(sessionId: string) {
             }
           : undefined,
       );
+
+      mediaRecorderRef.current = recorder;
 
       chunksRef.current = [];
 
@@ -119,9 +214,8 @@ export function useVoiceRecorder(sessionId: string) {
         }
       };
 
-      mediaRecorderRef.current = recorder;
-
       recorder.start();
+      monitorSilence(stream);
 
       setState("listening");
     } catch (error) {
@@ -134,16 +228,39 @@ export function useVoiceRecorder(sessionId: string) {
   }
 
   function stopRecording() {
-    if (state !== "listening") return;
+    const recorder = mediaRecorderRef.current;
 
-    mediaRecorderRef.current?.stop();
+    if (!recorder) return;
+
+    if (recorder.state !== "recording") return;
+
+    recorder.stop();
+  }
+
+  function startConversation() {
+    conversationActiveRef.current = true;
+
+    startRecording();
+  }
+
+  function endConversation() {
+    conversationActiveRef.current = false;
+
+    stopRecording();
+
+    audioRef.current?.pause();
+
+    cleanup();
+
+    setState("idle");
   }
 
   return {
     state,
     duration,
     audioBlob,
-    startRecording,
+    startConversation,
+    endConversation,
     stopRecording,
   };
 }

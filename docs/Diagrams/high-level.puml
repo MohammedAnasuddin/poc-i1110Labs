@@ -29,15 +29,7 @@ package "Backend" {
 
 }
 
-package "External Services" {
 
-  [OpenAI]
-
-  [SMS Service]
-
-  [Email Service]
-
-}
 
 Customer --> [Voice UI]
 
@@ -49,7 +41,6 @@ Customer --> [Voice UI]
 
 [Session Manager] --> [AI Agent]
 
-[AI Agent] --> [OpenAI]
 
 [AI Agent] --> [Tool Executor]
 
@@ -59,9 +50,6 @@ Customer --> [Voice UI]
 
 [Tool Executor] --> "Session Store"
 
-[Tool Executor] --> [SMS Service]
-
-[Tool Executor] --> [Email Service]
 
 [Express API] --> [Transcript]
 
