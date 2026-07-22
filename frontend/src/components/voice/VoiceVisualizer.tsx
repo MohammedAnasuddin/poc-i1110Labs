@@ -1,9 +1,10 @@
-import { Mic } from "lucide-react";
+import { Mic, Sparkles, Volume2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import type { VoiceState } from "@/types/voice";
 
 export function VoiceVisualizer({ state }: { state: VoiceState }) {
+  // Thinking State -> Amber Sparkles
   if (state === "thinking") {
     return (
       <motion.div
@@ -17,11 +18,12 @@ export function VoiceVisualizer({ state }: { state: VoiceState }) {
         }}
         className="flex h-32 w-32 items-center justify-center rounded-full bg-amber-500/20"
       >
-        <Mic className="h-10 w-10 text-amber-500" />
+        <Sparkles className="h-10 w-10 text-amber-500" />
       </motion.div>
     );
   }
 
+  // Speaking State -> Emerald Volume2 with Pulsing Rings
   if (state === "speaking") {
     return (
       <div className="relative flex h-32 w-32 items-center justify-center">
@@ -41,14 +43,15 @@ export function VoiceVisualizer({ state }: { state: VoiceState }) {
           />
         ))}
 
-        <Mic className="relative z-10 h-10 w-10 text-emerald-500" />
+        <Volume2 className="relative z-10 h-10 w-10 text-emerald-500" />
       </div>
     );
   }
 
+  // Listening State -> Waveform Only (No redundant mic icon)
   if (state === "listening") {
     return (
-      <div className="flex h-32 items-end gap-1">
+      <div className="flex h-32 items-end justify-center gap-1">
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={i}
@@ -67,6 +70,7 @@ export function VoiceVisualizer({ state }: { state: VoiceState }) {
     );
   }
 
+  // Idle State -> Primary Blue Mic
   return (
     <div className="flex h-32 w-32 items-center justify-center rounded-full bg-[var(--primary)] text-white">
       <Mic className="h-10 w-10" />

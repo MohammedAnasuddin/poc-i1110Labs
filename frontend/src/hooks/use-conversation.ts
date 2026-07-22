@@ -13,14 +13,14 @@ export function useConversation(sessionId: string) {
   const [messages, setMessages] = useState<ConversationMessage[]>([]);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      setMessages([]);
+      return;
+    }
 
     async function load() {
       try {
         const messages = await getConversation(sessionId);
-
-        console.log("Conversation:", messages);
-
         setMessages(messages);
       } catch (error) {
         console.error(error);

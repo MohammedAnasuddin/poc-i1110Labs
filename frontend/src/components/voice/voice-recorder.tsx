@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/Card";
 import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
-import { VoiceWave } from "./VoiceWave";
 import { useEffect } from "react";
 import { VoiceVisualizer } from "./VoiceVisualizer";
 
@@ -25,18 +24,27 @@ function VoiceLabel({ state }: { state: VoiceState }) {
   }
 }
 
-function formatDuration(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
+// function formatDuration(seconds: number) {
+//   const minutes = Math.floor(seconds / 60);
+//   const remaining = seconds % 60;
 
-  const remaining = seconds % 60;
+//   return `${minutes.toString().padStart(2, "0")}:${remaining
+//     .toString()
+//     .padStart(2, "0")}`;
+// }
 
-  return `${minutes.toString().padStart(2, "0")}:${remaining
-    .toString()
-    .padStart(2, "0")}`;
-}
+type Props = {
+  sessionId: string;
+  onStartConversation: () => Promise<void>;
+  onEndConversation: () => Promise<void>;
+};
 
-export function VoiceRecorder({ sessionId }: { sessionId: string }) {
-  const { state, duration, startConversation, stopRecording } =
+export function VoiceRecorder({
+  sessionId,
+  onStartConversation,
+  onEndConversation,
+}: Props) {
+  const { state, startConversation, endConversation, stopRecording } =
     useVoiceRecorder(sessionId);
 
   useEffect(() => {
@@ -45,15 +53,35 @@ export function VoiceRecorder({ sessionId }: { sessionId: string }) {
     startConversation();
   }, [sessionId]);
 
+  async function handleEnd() {
+    endConversation();
+
+    await onEndConversation();
+  }
+
   if (!sessionId) {
     return (
-      <div className="rounded-lg border p-6 text-center text-gray-500">
+      <Card
+        onClick={onStartConversation}
+        className="
+        cursor-pointer
+        transition
+        hover:scale-[1.01]
+        hover:border-blue-500
+    "
+      >
+        {" "}
         Click <strong>Start Conversation</strong> to begin.
-      </div>
+      </Card>
     );
   }
 
   const handleClick = () => {
+    if (state === "idle") {
+      startConversation();
+      return;
+    }
+
     if (state === "listening") {
       stopRecording();
     }
@@ -64,10 +92,6 @@ export function VoiceRecorder({ sessionId }: { sessionId: string }) {
       <div className="flex flex-col items-center gap-6">
         {/* Heading */}
         <div className="space-y-3 text-center">
-          {/* <h1 className="text-4xl font-semibold tracking-tight text-[var(--foreground)]">
-            Pizza Palace AI
-          </h1> */}
-
           <p className="text-base text-[var(--muted)]">
             Voice ordering assistant
           </p>
@@ -77,7 +101,7 @@ export function VoiceRecorder({ sessionId }: { sessionId: string }) {
         <button
           type="button"
           onClick={handleClick}
-          disabled={state === "thinking" || state === "speaking"}
+          disabled={state === "thinking"}
           className="
             transition-transform
             hover:scale-105
@@ -89,12 +113,12 @@ export function VoiceRecorder({ sessionId }: { sessionId: string }) {
         </button>
 
         {/* Timer */}
-        <p className="font-mono text-2xl font-semibold text-[var(--foreground)]">
+        {/* <p className="font-mono text-2xl font-semibold text-[var(--foreground)]">
           {formatDuration(duration)}
-        </p>
+        </p> */}
 
         {/* Audio Wave */}
-        <VoiceWave active={state === "listening" || state === "speaking"} />
+        {/* <VoiceWave active={state === "listening" || state === "speaking"} /> */}
 
         {/* Status */}
         <div className="flex flex-col items-center gap-3">
@@ -106,6 +130,17 @@ export function VoiceRecorder({ sessionId }: { sessionId: string }) {
             Speak naturally. I'll listen, think, and respond automatically.
           </p>
         </div>
+
+        {/* End Conversation Button */}
+        {state !== "idle" && (
+          <button
+            type="button"
+            onClick={handleEnd}
+            className="mt-2 rounded-full bg-red-500/10 px-5 py-2 text-xs font-semibold uppercase tracking-wider text-red-600 transition-colors hover:bg-red-500/20 dark:text-red-400"
+          >
+            End Conversation
+          </button>
+        )}
       </div>
     </Card>
   );

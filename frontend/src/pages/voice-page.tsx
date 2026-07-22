@@ -35,22 +35,13 @@ export function VoicePage() {
 
   return (
     <Page>
-      <div className="mb-4 flex justify-end">
-        <button
-          onClick={handleConversation}
-          className={`rounded-md px-4 py-2 text-white transition-colors ${
-            sessionId
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-blue-600 hover:bg-blue-700"
-          }`}
-        >
-          {sessionId ? "End Conversation" : "Start Conversation"}
-        </button>
-      </div>
-
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <VoiceRecorder sessionId={sessionId} />
+          <VoiceRecorder
+            sessionId={sessionId}
+            onStartConversation={handleConversation}
+            onEndConversation={handleConversation}
+          />
 
           <ConversationList sessionId={sessionId} />
         </div>

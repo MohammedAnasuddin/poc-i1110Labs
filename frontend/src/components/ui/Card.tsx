@@ -1,13 +1,16 @@
-import type { PropsWithChildren } from "react";
+import type { HTMLAttributes, PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
 
-type CardProps = PropsWithChildren<{
-  className?: string;
-}>;
+type CardProps = PropsWithChildren<
+  HTMLAttributes<HTMLElement> & {
+    className?: string;
+  }
+>;
 
-export function Card({ children, className }: CardProps) {
+export function Card({ children, className, ...props }: CardProps) {
   return (
     <section
+      {...props}
       className={cn(
         `
         surface-raised
