@@ -2,3 +2,4 @@ backup.sql
 /backend/dist
 /backend/dist
 /backend/dist
+frontend/.env
