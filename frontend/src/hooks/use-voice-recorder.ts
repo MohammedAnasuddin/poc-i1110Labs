@@ -5,7 +5,7 @@ import type { VoiceState } from "@/types/voice";
 
 export function useVoiceRecorder(sessionId: string) {
   const [state, setState] = useState<VoiceState>("idle");
-  const [duration, setDuration] = useState(0);
+  const [duration] = useState(0);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -16,7 +16,7 @@ export function useVoiceRecorder(sessionId: string) {
 
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const silenceFrameRef = useRef<number>();
+  const silenceFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     stateRef.current = state;

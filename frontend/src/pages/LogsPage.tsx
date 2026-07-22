@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { getLogs } from "@/api/logs.api";
 
-import type { AgentLog } from "@/types/log";
+import type { AgentLog } from "@/types/AgentLog";
 
 import { LogTable } from "@/components/logs/LogTable";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";

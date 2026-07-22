@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/Card";
 import { useVoiceRecorder } from "@/hooks/use-voice-recorder";
 import { VoiceWave } from "./VoiceWave";
 import { useEffect } from "react";
-import { Mic } from "lucide-react";
 import { VoiceVisualizer } from "./VoiceVisualizer";
 
 import type { VoiceState } from "@/types/voice";
@@ -37,9 +36,8 @@ function formatDuration(seconds: number) {
 }
 
 export function VoiceRecorder({ sessionId }: { sessionId: string }) {
-  const { state, duration, startConversation, endConversation, stopRecording } =
+  const { state, duration, startConversation, stopRecording } =
     useVoiceRecorder(sessionId);
-    
 
   useEffect(() => {
     if (!sessionId) return;

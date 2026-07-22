@@ -1,3 +1,4 @@
+import type { VoiceState } from "@/types/voice";
 type Props = {
   state: VoiceState;
 };

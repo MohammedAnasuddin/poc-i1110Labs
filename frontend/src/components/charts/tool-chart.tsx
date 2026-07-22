@@ -81,6 +81,10 @@ export function ToolChart({ success, failed }: Props) {
     dataLabels: {
       enabled: true,
       formatter(val) {
+        if (typeof val !== "number") {
+          return String(val);
+        }
+
         return `${val.toFixed(0)}%`;
       },
     },
@@ -113,7 +117,7 @@ export function ToolChart({ success, failed }: Props) {
 
             value: {
               formatter(value) {
-                return value;
+                return String(value);
               },
             },
           },

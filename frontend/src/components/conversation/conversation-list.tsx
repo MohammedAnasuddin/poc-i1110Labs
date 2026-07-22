@@ -3,23 +3,22 @@ import { Card } from "@/components/ui/Card";
 import { useConversation } from "@/hooks/use-conversation";
 
 import { MessageBubble } from "./MessageBubble";
-import { TypingIndicator } from "./TypingIndicator";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 type ConversationListProps = {
   sessionId: string;
 };
 
-function handleScroll() {
-  const container = containerRef.current;
+// function handleScroll() {
+//   const container = containerRef.current;
 
-  if (!container) return;
+//   if (!container) return;
 
-  const distance =
-    container.scrollHeight - container.scrollTop - container.clientHeight;
+//   const distance =
+//     container.scrollHeight - container.scrollTop - container.clientHeight;
 
-  setShowJumpButton(distance > 120);
-}
+//   setShowJumpButton(distance > 120);
+// }
 
 export function ConversationList({ sessionId }: ConversationListProps) {
   const [showJumpButton, setShowJumpButton] = useState(false);
@@ -70,7 +69,7 @@ export function ConversationList({ sessionId }: ConversationListProps) {
             visibleMessages.map((message) => (
               <MessageBubble
                 key={message.id}
-                role={message.role}
+                role={message.role === "tool" ? "assistant" : message.role}
                 message={message.content}
               />
             ))
