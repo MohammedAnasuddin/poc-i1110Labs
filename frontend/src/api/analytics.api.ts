@@ -1,25 +1,17 @@
+import { api } from "@/api/api";
 import type { Analytics, ConversationAnalytics } from "../types/analytics";
 
-const API_URL = "http://localhost:3000/api";
-
 export async function getAnalytics(): Promise<Analytics> {
-  const response = await fetch(`${API_URL}/analytics`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch analytics.");
-  }
-
-  return response.json();
+  const { data } = await api.get<Analytics>("/analytics");
+  return data;
 }
 
 export async function getConversationAnalytics(): Promise<
   ConversationAnalytics[]
 > {
-  const response = await fetch(`${API_URL}/analytics/conversations`);
+  const { data } = await api.get<ConversationAnalytics[]>(
+    "/analytics/conversations",
+  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch conversation analytics.");
-  }
-
-  return response.json();
+  return data;
 }
